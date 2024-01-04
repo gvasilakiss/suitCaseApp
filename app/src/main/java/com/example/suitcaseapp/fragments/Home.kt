@@ -6,21 +6,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.ImageButton
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.suitcaseapp.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.recyclerview.widget.RecyclerView
+import com.example.suitcaseapp.HolidayAdapter
 
 
 class Home : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var navControl: NavController
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var addButton: FloatingActionButton
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var menuBtn: ImageButton
+    private lateinit var holidayAdapter: HolidayAdapter
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,8 +40,8 @@ class Home : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         init(view)
-        registerEvents()
         setupAddButton()
+        //registerEvents()
     }
 
     private fun init(view: View) {
@@ -43,16 +50,23 @@ class Home : Fragment() {
         firestore = FirebaseFirestore.getInstance()
     }
 
-    private fun registerEvents() {
-        view?.findViewById<Button>(R.id.logOutBtn)?.setOnClickListener {
-            logoutUser()
-        }
+    private fun showMenu() {
+
     }
 
-    private fun logoutUser() {
-        auth.signOut()
-        navControl.navigate(R.id.action_homeFragment_to_signInFragment)
+    private fun setupRecyclerView() {
+
     }
+
+//    private fun registerEvents() {
+//        view?.findViewById<Button>(R.id.logOutBtn)?.setOnClickListener {
+//            logoutUser()
+//        }
+
+//    private fun logoutUser() {
+//        auth.signOut()
+//        navControl.navigate(R.id.action_homeFragment_to_signInFragment)
+//    }
     private fun setupAddButton() {
         //on click button navigate to notesDetails
         val addButton = view?.findViewById<FloatingActionButton>(R.id.addButton) ?: return
@@ -60,20 +74,5 @@ class Home : Fragment() {
             // Check if navControl is initialized and if the destination exists in the navigation graph
             navControl.navigate(R.id.action_homeFragment_to_notesDetails)
         }
-//        val todoEditText = view?.findViewById<EditText>(R.id.todoEditText)
-//
-//        addButton.setOnClickListener {
-//            val todoText = todoEditText?.text.toString().trim()
-//
-//            if (todoText.isNotEmpty()) {
-//                addTodoToFirestore(todoText)
-//                // Clear the EditText after adding the todo
-//                todoEditText?.setText("")
-//            } else {
-//                Toast.makeText(context, "Empty fields are not allowed", Toast.LENGTH_SHORT).show()
-//            }
-//        }
     }
-
-
 }

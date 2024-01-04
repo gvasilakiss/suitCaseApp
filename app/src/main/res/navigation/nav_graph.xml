@@ -66,9 +66,9 @@
     </fragment>
     <fragment
         android:id="@+id/notesDetails"
-        android:name="com.example.suitcaseapp.fragments.NotesDetails"
+        android:name="com.example.suitcaseapp.fragments.HolidayDetails"
         android:label="fragment_notes_details"
-        tools:layout="@layout/fragment_notes_details" >
+        tools:layout="@layout/fragment_holiday_details" >
         <action
             android:id="@+id/action_notesDetails_to_homeFragment"
             app:destination="@id/homeFragment" />

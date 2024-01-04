@@ -4,9 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.NotesDetails"
-    >
-
+    tools:context=".fragments.HolidayDetails">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,24 +12,23 @@
         android:id="@+id/title_bar_layout">
 
         <TextView
-            android:id="@+id/page_title"
+            android:id="@+id/NotesPageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add New Note"
+            android:text="Add New Holiday"
             android:textColor="@color/blue"
             android:textSize="32sp"
             android:textStyle="bold" />
 
         <ImageButton
+            android:id="@+id/SaveNotes"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:id="@+id/save_note_btn"
             android:src="@drawable/baseline_check_24"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             app:tint="@color/blue"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless" />
 
     </RelativeLayout>
 
@@ -48,7 +45,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/notes_title_text"
+            android:id="@+id/notesTitle"
             android:hint="Title"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -57,7 +54,7 @@
             android:textColor="@color/black"/>
 
         <EditText
-            android:id="@+id/notes_content_text"
+            android:id="@+id/notesDescription"
             android:layout_width="match_parent"
             android:layout_height="152dp"
             android:layout_marginVertical="8dp"
@@ -68,17 +65,26 @@
             android:textColor="@color/black"
             android:textSize="20sp" />
 
+        <CheckBox
+            android:id="@+id/chkItemsPurchased"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Items Purchased"
+            android:textSize="20sp"
+            android:layout_marginVertical="8dp" />
+
+        <Button
+            android:id="@+id/selectImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Image"
+            android:layout_marginTop="8dp" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp" />
+
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/delete_note_text_view_btn"
-        android:text="Delete note"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:visibility="gone"
-        android:textColor="#FF0000"/>
-
-    </RelativeLayout>
+</RelativeLayout>
