@@ -14,27 +14,23 @@ import com.example.suitcaseapp.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-
-
-class Home : Fragment() {
+class NotesDetails : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var navControl: NavController
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var addButton: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_notes_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         init(view)
-        registerEvents()
-        setupAddButton()
     }
 
     private fun init(view: View) {
@@ -43,30 +39,14 @@ class Home : Fragment() {
         firestore = FirebaseFirestore.getInstance()
     }
 
-    private fun registerEvents() {
-        view?.findViewById<Button>(R.id.logOutBtn)?.setOnClickListener {
-            logoutUser()
-        }
-    }
-
-    private fun logoutUser() {
-        auth.signOut()
-        navControl.navigate(R.id.action_homeFragment_to_signInFragment)
-    }
     private fun setupAddButton() {
-        //on click button navigate to notesDetails
-        val addButton = view?.findViewById<FloatingActionButton>(R.id.addButton) ?: return
-        addButton.setOnClickListener {
-            // Check if navControl is initialized and if the destination exists in the navigation graph
-            navControl.navigate(R.id.action_homeFragment_to_notesDetails)
-        }
 //        val todoEditText = view?.findViewById<EditText>(R.id.todoEditText)
 //
 //        addButton.setOnClickListener {
 //            val todoText = todoEditText?.text.toString().trim()
 //
 //            if (todoText.isNotEmpty()) {
-//                addTodoToFirestore(todoText)
+//                addToFirestore(todoText)
 //                // Clear the EditText after adding the todo
 //                todoEditText?.setText("")
 //            } else {
@@ -75,5 +55,24 @@ class Home : Fragment() {
 //        }
     }
 
+    private fun addToFirestore(todoText: String) {
+        val currentUser = auth.currentUser
+        currentUser?.let { user ->
+            val todo = hashMapOf(
+                "text" to todoText
+            )
+
+            firestore.collection("users").document(user.email!!).collection("todos")
+                .add(todo)
+                .addOnSuccessListener {
+                    // Handle successfully adding the todo item
+                    Toast.makeText(context, "Todo added successfully", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    // Handle errors while adding the todo item
+                    Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
 
 }

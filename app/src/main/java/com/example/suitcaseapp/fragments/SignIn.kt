@@ -48,7 +48,7 @@ class SignIn : Fragment() {
             if (isValidEmail(email) && isValidPassword(pass))
                 loginUser(email, pass)
             else
-                Toast.makeText(context, "Invalid email or password format", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Invalid email or password format!!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -62,14 +62,21 @@ class SignIn : Fragment() {
     }
 
     private fun loginUser(email: String, pass: String) {
-        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
-            if (it.isSuccessful)
-                navController.navigate(R.id.action_signInFragment_to_homeFragment)
-            else
-                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
-
+        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener { signInTask ->
+            if (signInTask.isSuccessful) {
+                val user = mAuth.currentUser
+                if (user != null && user.isEmailVerified) {
+                    navController.navigate(R.id.action_signInFragment_to_homeFragment)
+                } else {
+                    Toast.makeText(context, "Email is not verified.", Toast.LENGTH_SHORT).show()
+                    mAuth.signOut()
+                }
+            } else {
+                Toast.makeText(context, signInTask.exception.toString(), Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
 
     private fun init(view: View) {
         navController = Navigation.findNavController(view)
