@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/appLogoSignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher_background"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"/>
+
+    <EditText
+        android:id="@+id/signInEmailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/type_your_email"
+        android:inputType="textEmailAddress"
+        android:layout_below="@id/appLogoSignIn"
+        android:layout_marginTop="16dp"
+        android:autofillHints="Enter your email" />
+
+    <EditText
+        android:id="@+id/signInPasswordText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/type_your_password"
+        android:inputType="textPassword"
+        android:layout_below="@id/signInEmailEditText"
+        android:layout_marginTop="16dp"
+        android:autofillHints="Enter your password" />
+
+    <TextView
+        android:id="@+id/forgotPasswordRedirect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signInPasswordText"
+        android:layout_alignEnd="@+id/signInPasswordText"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="1dp"
+        android:text="@string/forgot_your_password" />
+
+    <Button
+        android:id="@+id/signInBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/forgotPasswordRedirect"
+        android:layout_marginTop="10dp"
+        android:text="@string/sign_in" />
+
+    <TextView
+        android:id="@+id/signUpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/don_t_have_an_account_sign_up_below"
+        android:layout_below="@id/signInBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/signUpBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signUpText"
+        android:layout_marginTop="2dp"
+        android:text="@string/sign_up" />
+
+</RelativeLayout>
