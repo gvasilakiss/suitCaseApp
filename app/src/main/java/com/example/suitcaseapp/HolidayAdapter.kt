@@ -6,34 +6,30 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.suitcaseapp.fragments.HolidayDetails
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
-class HolidayAdapter(private var holidayList: MutableList<HolidayDetails.Holiday>) : RecyclerView.Adapter<HolidayAdapter.HolidayViewHolder>() {
+// Define the adapter for the RecyclerView
+class HolidayAdapter(options: FirestoreRecyclerOptions<HolidayDetails.Holiday>)
+    : FirestoreRecyclerAdapter<HolidayDetails.Holiday, HolidayAdapter.HolidayViewHolder>(options) {
 
-    class HolidayViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val title: TextView = itemView.findViewById(R.id.holidayTitle)
-        val description: TextView = itemView.findViewById(R.id.holidaDescription)
-        val timestamp: TextView = itemView.findViewById(R.id.holidayTimestamp)
-
-        fun bind(holiday: HolidayDetails.Holiday) {
-            title.text = holiday.title
-            description.text = holiday.lines.joinToString(separator = "\n")
-            timestamp.text = holiday.dateCreated
-        }
+    // ViewHolder class
+    class HolidayViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val titleTextView: TextView = view.findViewById(R.id.holidayTitle)
+        val descriptionTextView: TextView = view.findViewById(R.id.holidayDescription)
+        val dateCreatedTextView: TextView = view.findViewById(R.id.holidayTimestamp)
     }
 
+    // Inflate the item layout
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolidayViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_holiday_item, parent, false)
         return HolidayViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: HolidayViewHolder, position: Int) {
-        holder.bind(holidayList[position])
-    }
-
-    override fun getItemCount() = holidayList.size
-
-    fun updateData(newHolidayList: MutableList<HolidayDetails.Holiday>) {
-        holidayList = newHolidayList
-        notifyDataSetChanged()
+    // Bind data to the item
+    override fun onBindViewHolder(holder: HolidayViewHolder, position: Int, model: HolidayDetails.Holiday) {
+        holder.titleTextView.text = model.title
+        holder.descriptionTextView.text = model.lines.joinToString("\n")
+        holder.dateCreatedTextView.text = model.dateCreated
     }
 }

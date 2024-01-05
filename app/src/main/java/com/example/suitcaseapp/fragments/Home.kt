@@ -7,28 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.suitcaseapp.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.recyclerview.widget.RecyclerView
 import com.example.suitcaseapp.HolidayAdapter
-
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
 class Home : Fragment() {
+    // Firebase authentication instance
     private lateinit var auth: FirebaseAuth
+    // Navigation controller instance
     private lateinit var navControl: NavController
+    // Firestore database instance
     private lateinit var firestore: FirebaseFirestore
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var menuBtn: ImageButton
-    private lateinit var holidayAdapter: HolidayAdapter
-
-
-
+    // Inflate the layout for this fragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,37 +34,60 @@ class Home : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+    // Called immediately after onCreateView has returned
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize Firebase and navigation controller
         init(view)
+        // Setup the add button click listener
         setupAddButton()
-        //registerEvents()
+        // Setup the RecyclerView
+        setupRecyclerView()
     }
 
+    // Initialize Firebase and navigation controller
     private fun init(view: View) {
         navControl = Navigation.findNavController(view)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
     }
 
+    // Empty function, can be used to show a menu
     private fun showMenu() {
 
     }
 
+    // Setup the RecyclerView
     private fun setupRecyclerView() {
+        // Initialize the RecyclerView
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.holidayRecyclerView)
 
+        // Fetch the holiday data from Firestore
+        val currentUser = auth.currentUser
+        currentUser?.let { user ->
+            val email = user.email
+            if (email != null) {
+                val query = firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION)
+
+                // Configure the adapter options
+                val options = FirestoreRecyclerOptions.Builder<HolidayDetails.Holiday>()
+                    .setQuery(query, HolidayDetails.Holiday::class.java)
+                    .build()
+
+                // Initialize the adapter
+                val adapter = HolidayAdapter(options)
+
+                // Set the adapter on the RecyclerView
+                recyclerView?.adapter = adapter
+
+                // Start listening for Firestore updates
+                adapter.startListening()
+            }
+        }
     }
 
-//    private fun registerEvents() {
-//        view?.findViewById<Button>(R.id.logOutBtn)?.setOnClickListener {
-//            logoutUser()
-//        }
-
-//    private fun logoutUser() {
-//        auth.signOut()
-//        navControl.navigate(R.id.action_homeFragment_to_signInFragment)
-//    }
+    // Setup the add button click listener
     private fun setupAddButton() {
         //on click button navigate to notesDetails
         val addButton = view?.findViewById<FloatingActionButton>(R.id.addButton) ?: return
@@ -74,5 +95,14 @@ class Home : Fragment() {
             // Check if navControl is initialized and if the destination exists in the navigation graph
             navControl.navigate(R.id.action_homeFragment_to_notesDetails)
         }
+    }
+
+    companion object {
+        // Constant for the name of the 'holidays' collection in Firestore
+        private const val HOLIDAYS_COLLECTION = "holidays"
+        // Constant for the name of the 'users' collection in Firestore
+        private const val USERS_COLLECTION = "users"
+        // Constant for the name of the 'images' folder where images are stored
+        private const val IMAGES_FOLDER = "images"
     }
 }
