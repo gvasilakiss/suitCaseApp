@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,9 +15,11 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.suitcaseapp.R
@@ -26,9 +27,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.FirebaseFunctionsException
-import com.google.firebase.functions.functions
+import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
@@ -47,7 +46,6 @@ class holidayEdit : Fragment() {
     private lateinit var navControl: NavController
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
-    private lateinit var functions : FirebaseFunctions
 
     private lateinit var holidayTitleEditText: EditText
     private lateinit var descriptionEditText: EditText
@@ -73,9 +71,6 @@ class holidayEdit : Fragment() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
-        functions = Firebase.functions
-
-        functions.getHttpsCallable("europe-west2-sendSMS")
 
         holidayTitleEditText = view.findViewById(R.id.holidayTitleEditText)
         descriptionEditText = view.findViewById(R.id.holidayDescriptionEditText)
@@ -96,9 +91,22 @@ class holidayEdit : Fragment() {
         sendSmsButton.setOnClickListener {
             // log to console
             Log.d(TAG, "sendSMSButton clicked")
-            val holidayDetails = "Title: ${holidayTitleEditText.text}, Description: ${descriptionEditText.text}, Date: ${dateCreatedTextView.text}"
-            Log.d(TAG, "holidayDetails: $holidayDetails")
-            sendSms(holidayDetails, "+4407736781146") // Replace with the recipient's phone number
+            val holidayTitle = holidayTitleEditText.text.toString()
+            val description = descriptionEditText.text.toString()
+            val dateCreated = dateCreatedTextView.text.toString()
+
+            // Format the SMS content
+            val formattedMessage = "Holiday Details:\n\nTitle: $holidayTitle\n\nDescription: $description\n\nDate: $dateCreated"
+
+            // Show confirmation dialog
+            AlertDialog.Builder(requireContext())
+                .setTitle("Send SMS")
+                .setMessage("Are you sure you want to send this SMS?")
+                .setPositiveButton("Yes") { _, _ ->
+                    sendSms(formattedMessage, getString(R.string.PHONE_SMS)) // Replace with the recipient's phone number
+                }
+                .setNegativeButton("No", null)
+                .show()
         }
     }
 
@@ -123,24 +131,20 @@ class holidayEdit : Fragment() {
         }
     }
     private fun sendSms(message: String, to: String) {
-        val functions = Firebase.functions
+        val db = Firebase.firestore
         val data = hashMapOf(
-            "message" to message,
+            "body" to message,
             "to" to to
         )
-        functions
-            .getHttpsCallable("europe-west2-sendSMS") // Make sure this matches the name of your Firebase function
-            .call(data)
-            .continueWith { task ->
-                if (task.isSuccessful) {
-                    // Handle the result if there is one
-                    val result = task.result?.data
-                    Log.d("FirebaseFunctions", "Function result: $result")
-                } else {
-                    // Log all exceptions
-                    val e = task.exception
-                    Log.e("FirebaseFunctions", "Error calling function", e)
-                }
+        db.collection("messages")
+            .add(data)
+            .addOnSuccessListener { documentReference ->
+                Toast.makeText(requireContext(), "SMS sent", Toast.LENGTH_SHORT).show()
+                Log.d("Firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show()
+                Log.w("Firestore", "Error adding document", e)
             }
     }
 
