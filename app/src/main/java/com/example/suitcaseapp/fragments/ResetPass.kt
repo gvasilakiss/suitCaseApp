@@ -1,16 +1,15 @@
 package com.example.suitcaseapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.suitcaseapp.R
 import com.example.suitcaseapp.databinding.FragmentResetPassBinding
-import com.example.suitcaseapp.databinding.FragmentSignInBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class ResetPass : Fragment() {

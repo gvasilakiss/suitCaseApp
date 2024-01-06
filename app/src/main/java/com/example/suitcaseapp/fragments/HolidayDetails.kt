@@ -121,7 +121,7 @@ class HolidayDetails : Fragment() {
     data class Holiday(
         val title: String = "", // The title of the holiday
         val lines: List<String> = listOf(), // The lines of description for the holiday
-        val imageUrl: String? = null, // The URL of the image for the holiday (nullable)
+        var imageUrl: String? = null, // The URL of the image for the holiday (nullable)
         val dateCreated: String = "", // The date the holiday was created
         val isPurchased: Boolean = false // Whether the holiday has been purchased
     )

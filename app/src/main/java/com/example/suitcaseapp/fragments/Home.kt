@@ -1,22 +1,19 @@
 package com.example.suitcaseapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.RecyclerView
+import com.example.suitcaseapp.HolidayAdapter
 import com.example.suitcaseapp.R
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.recyclerview.widget.RecyclerView
-import com.example.suitcaseapp.HolidayAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
 class Home : Fragment() {
     // Firebase authentication instance
@@ -40,8 +37,8 @@ class Home : Fragment() {
 
         // Initialize Firebase and navigation controller
         init(view)
-        // Setup the add button click listener
-        setupAddButton()
+        // Setup the newHoliday button click listener
+        addNewHoliday()
         // Setup the RecyclerView
         setupRecyclerView()
     }
@@ -51,6 +48,7 @@ class Home : Fragment() {
         navControl = Navigation.findNavController(view)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+
     }
 
     // Empty function, can be used to show a menu
@@ -88,7 +86,7 @@ class Home : Fragment() {
     }
 
     // Setup the add button click listener
-    private fun setupAddButton() {
+    private fun addNewHoliday() {
         //on click button navigate to notesDetails
         val addButton = view?.findViewById<FloatingActionButton>(R.id.addButton) ?: return
         addButton.setOnClickListener {
@@ -102,7 +100,5 @@ class Home : Fragment() {
         private const val HOLIDAYS_COLLECTION = "holidays"
         // Constant for the name of the 'users' collection in Firestore
         private const val USERS_COLLECTION = "users"
-        // Constant for the name of the 'images' folder where images are stored
-        private const val IMAGES_FOLDER = "images"
     }
 }

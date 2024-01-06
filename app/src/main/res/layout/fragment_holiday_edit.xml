@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.HolidayDetails">
+    tools:context=".fragments.holidayEdit">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,15 +12,38 @@
         android:id="@+id/title_bar_layout">
 
         <ImageButton
-            android:id="@+id/SaveNotes"
+            android:id="@+id/saveHolidayButton"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="15dp
-"
+            android:layout_marginTop="15dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/baseline_check_24"
+            app:tint="@color/blue"
+            android:importantForAccessibility="no" />
+
+        <ImageButton
+            android:id="@+id/deleteHolidayButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="70dp"
+            android:layout_marginTop="15dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/baseline_delete_24"
+            app:tint="@color/blue"
+            android:importantForAccessibility="no" />
+
+        <ImageButton
+            android:id="@+id/sendSMSButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="120dp"
+            android:layout_marginTop="15dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/baseline_email_24"
             app:tint="@color/blue"
             android:importantForAccessibility="no" />
 
@@ -39,8 +62,8 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/notesTitle"
-            android:hint="@string/holiday_title"
+            android:id="@+id/holidayTitleEditText"
+            android:hint="Title"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginVertical="8dp"
@@ -49,13 +72,23 @@
             android:inputType="text" />
 
         <EditText
-            android:id="@+id/notesDescription"
+            android:id="@+id/holidayDescriptionEditText"
             android:layout_width="match_parent"
             android:layout_height="152dp"
             android:layout_marginVertical="8dp"
             android:gravity="top"
-            android:hint="Content"
             android:minLines="15"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/holidayDateCreatedEditText"
+            android:layout_width="271dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:enabled="false"
+            android:gravity="top"
             android:padding="12dp"
             android:textColor="@color/black"
             android:textSize="20sp" />
@@ -84,12 +117,12 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/NotesPageTitle"
+        android:id="@+id/editPageTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="14dp"
-        android:text="@string/add_new_holiday"
+        android:text="@string/holiday_title"
         android:textColor="@color/blue"
         android:textSize="32sp"
         android:textStyle="bold" />

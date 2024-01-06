@@ -1,5 +1,6 @@
 package com.example.suitcaseapp.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +13,7 @@ import androidx.navigation.NavController
 import com.example.suitcaseapp.R
 import com.google.firebase.auth.FirebaseAuth
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreen : Fragment() {
 
 
@@ -32,7 +34,7 @@ class SplashScreen : Fragment() {
         auth = FirebaseAuth.getInstance()
         navController = Navigation.findNavController(view)
 
-        Handler(Looper.myLooper()!!).postDelayed(Runnable{
+        Handler(Looper.myLooper()!!).postDelayed({
             if (auth.currentUser != null) {
                 // User is signed in
                 // Redirect to home page
