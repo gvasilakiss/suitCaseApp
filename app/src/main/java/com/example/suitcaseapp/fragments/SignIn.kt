@@ -1,16 +1,18 @@
 package com.example.suitcaseapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.suitcaseapp.R
 import com.example.suitcaseapp.databinding.FragmentSignInBinding
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 
 class SignIn : Fragment() {
 
@@ -32,6 +34,13 @@ class SignIn : Fragment() {
 
         init(view)
 
+        // Check if user is already logged in
+        val currentUser = mAuth.currentUser
+        if (currentUser != null && currentUser.isEmailVerified) {
+            navController.navigate(R.id.action_signInFragment_to_homeFragment)
+            return
+        }
+
         binding.signUpBtn.setOnClickListener {
             navController.navigate(R.id.action_signInFragment_to_signUpFragment)
         }
@@ -48,7 +57,7 @@ class SignIn : Fragment() {
             if (isValidEmail(email) && isValidPassword(pass))
                 loginUser(email, pass)
             else
-                Toast.makeText(context, "Invalid email or password format!!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.invalid_email_or_password), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -68,15 +77,27 @@ class SignIn : Fragment() {
                 if (user != null && user.isEmailVerified) {
                     navController.navigate(R.id.action_signInFragment_to_homeFragment)
                 } else {
-                    Toast.makeText(context, "Email is not verified.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,
+                        getString(R.string.email_is_not_verified), Toast.LENGTH_SHORT).show()
                     mAuth.signOut()
                 }
             } else {
-                Toast.makeText(context, signInTask.exception.toString(), Toast.LENGTH_SHORT).show()
+                when (val exception = signInTask.exception) {
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        Toast.makeText(context, getString(R.string.invalid_email_or_password), Toast.LENGTH_SHORT).show()
+                    }
+
+                    is FirebaseNetworkException -> {
+                        Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
+                    }
+
+                    else -> {
+                        Toast.makeText(context, exception?.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
-
 
     private fun init(view: View) {
         navController = Navigation.findNavController(view)
