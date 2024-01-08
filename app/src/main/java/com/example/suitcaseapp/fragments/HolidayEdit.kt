@@ -34,7 +34,7 @@ import com.squareup.picasso.Picasso
 import java.util.UUID
 
 
-class holidayEdit : Fragment() {
+class HolidayEdit : Fragment() {
 
     companion object {
         private const val USERS_COLLECTION = "users"
@@ -98,14 +98,36 @@ class holidayEdit : Fragment() {
             // Format the SMS content
             val formattedMessage = "Holiday Details:\n\nTitle: $holidayTitle\n\nDescription: $description\n\nDate: $dateCreated"
 
-            // Show confirmation dialog
+            // Create an EditText where the user can enter the phone number
+            val phoneNumberEditText = EditText(requireContext())
+            phoneNumberEditText.hint = "Enter phone number"
+
+            // Show dialog to enter phone number
             AlertDialog.Builder(requireContext())
-                .setTitle("Send SMS")
-                .setMessage("Are you sure you want to send this SMS?")
-                .setPositiveButton("Yes") { _, _ ->
-                    sendSms(formattedMessage, getString(R.string.PHONE_SMS)) // Replace with the recipient's phone number
+                .setTitle("Enter Phone Number")
+                .setView(phoneNumberEditText)
+                .setPositiveButton("OK") { _, _ ->
+                    val phoneNumber = phoneNumberEditText.text.toString()
+                    if (phoneNumber.isNotBlank()) {
+                        // Check if the phone number starts with "+44"
+                        if (phoneNumber.matches("^\\+44.*$".toRegex())) {
+                            // Show confirmation dialog
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Send SMS")
+                                .setMessage("Are you sure you want to send this SMS?")
+                                .setPositiveButton("Yes") { _, _ ->
+                                    sendSms(formattedMessage, phoneNumber)
+                                }
+                                .setNegativeButton("No", null)
+                                .show()
+                        } else {
+                            Toast.makeText(requireContext(), "Phone number must start with +44", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Please enter a phone number", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                .setNegativeButton("No", null)
+                .setNegativeButton("Cancel", null)
                 .show()
         }
     }

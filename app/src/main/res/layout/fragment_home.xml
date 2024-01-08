@@ -21,14 +21,15 @@
             android:textStyle="bold" />
 
         <ImageButton
-            android:id="@+id/SaveNotes"
+            android:id="@+id/menuHome"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:src="@drawable/baseline_folder_shared_24"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             app:tint="@color/blue"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:importantForAccessibility="no" />
 
     </RelativeLayout>
 

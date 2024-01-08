@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -41,6 +42,13 @@ class Home : Fragment() {
         addNewHoliday()
         // Setup the RecyclerView
         setupRecyclerView()
+
+
+        // Find the ImageButton and set a click listener on it
+        val menuButton = view.findViewById<ImageButton>(R.id.menuHome)
+        menuButton.setOnClickListener {
+            logoutUser()
+        }
     }
 
     // Initialize Firebase and navigation controller
@@ -93,6 +101,11 @@ class Home : Fragment() {
             // Check if navControl is initialized and if the destination exists in the navigation graph
             navControl.navigate(R.id.action_homeFragment_to_notesDetails)
         }
+    }
+
+    private fun logoutUser() {
+        auth.signOut()
+        navControl.navigate(R.id.action_homeFragment_to_signInFragment)
     }
 
     companion object {
