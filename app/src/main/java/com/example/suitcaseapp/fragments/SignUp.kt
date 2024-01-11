@@ -1,17 +1,17 @@
 package com.example.suitcaseapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import com.example.suitcaseapp.R
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.suitcaseapp.R
 import com.example.suitcaseapp.databinding.FragmentSignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -73,13 +73,14 @@ class SignUp : Fragment() {
             val email = binding.emailEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
 
-            if (email.isNotEmpty() && password.isNotEmpty()){
+            if (email.isNotEmpty() && password.isNotEmpty()) {
                 createUser(email, password)
             } else {
                 // Show an error message for empty fields
             }
         }
     }
+
     // Create a new user with email and password - check if email and password are valid
     private fun createUser(email: String, password: String) {
         if (isValidEmail(email) && isValidPassword(password)) {
@@ -87,11 +88,20 @@ class SignUp : Fragment() {
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
                         val user = auth.currentUser
-                        user?.sendEmailVerification()?.addOnCompleteListener { emailTask -> // Send verification email
-                            if (emailTask.isSuccessful) {
-                                Toast.makeText(context, "Registered successfully and Verification email sent.", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(context, "Registered successfully but Failed to send verification email.", Toast.LENGTH_SHORT).show()
+                        user?.sendEmailVerification()
+                            ?.addOnCompleteListener { emailTask -> // Send verification email
+                                if (emailTask.isSuccessful) {
+                                    Toast.makeText(
+                                        context,
+                                        "Registered successfully and Verification email sent.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Registered successfully but Failed to send verification email.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         navControl.navigate(R.id.action_signUpFragment_to_homeFragment)
@@ -99,10 +109,12 @@ class SignUp : Fragment() {
                         val exception = task.exception
                         if (exception is FirebaseAuthUserCollisionException) {
                             // Email already exists
-                            Toast.makeText(context, "Email already exists.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Email already exists.", Toast.LENGTH_SHORT)
+                                .show()
                         } else {
                             // Other authentication failures
-                            Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }
@@ -110,7 +122,6 @@ class SignUp : Fragment() {
             Toast.makeText(context, "Invalid email or password format", Toast.LENGTH_SHORT).show()
         }
     }
-
 
 
     private fun isValidEmail(email: String): Boolean {
@@ -121,6 +132,4 @@ class SignUp : Fragment() {
     private fun isValidPassword(password: String): Boolean {
         return password.length >= 6 // Password should have at least 6 characters
     }
-
-
 }

@@ -19,8 +19,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 class Home : Fragment() {
     // Firebase authentication instance
     private lateinit var auth: FirebaseAuth
+
     // Navigation controller instance
     private lateinit var navControl: NavController
+
     // Firestore database instance
     private lateinit var firestore: FirebaseFirestore
 
@@ -59,11 +61,6 @@ class Home : Fragment() {
 
     }
 
-    // Empty function, can be used to show a menu
-    private fun showMenu() {
-
-    }
-
     // Setup the RecyclerView
     private fun setupRecyclerView() {
         // Initialize the RecyclerView
@@ -74,7 +71,8 @@ class Home : Fragment() {
         currentUser?.let { user ->
             val email = user.email
             if (email != null) {
-                val query = firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION)
+                val query = firestore.collection(USERS_COLLECTION).document(email)
+                    .collection(HOLIDAYS_COLLECTION)
 
                 // Configure the adapter options
                 val options = FirestoreRecyclerOptions.Builder<HolidayDetails.Holiday>()
@@ -111,6 +109,7 @@ class Home : Fragment() {
     companion object {
         // Constant for the name of the 'holidays' collection in Firestore
         private const val HOLIDAYS_COLLECTION = "holidays"
+
         // Constant for the name of the 'users' collection in Firestore
         private const val USERS_COLLECTION = "users"
     }

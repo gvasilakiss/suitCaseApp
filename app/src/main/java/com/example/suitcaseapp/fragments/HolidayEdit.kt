@@ -56,6 +56,8 @@ class HolidayEdit : Fragment() {
     private lateinit var deleteButton: ImageButton
     private lateinit var dateCreatedTextView: EditText
     private var imageUri: Uri? = null
+    private var currentImageUrl: String? = null
+
 
     private lateinit var imageResultLauncher: ActivityResultLauncher<Intent>
 
@@ -96,7 +98,8 @@ class HolidayEdit : Fragment() {
             val dateCreated = dateCreatedTextView.text.toString()
 
             // Format the SMS content
-            val formattedMessage = "Holiday Details:\n\nTitle: $holidayTitle\n\nDescription: $description\n\nDate: $dateCreated"
+            val formattedMessage =
+                "Holiday Details:\n\nTitle: $holidayTitle\n\nDescription: $description\n\nDate: $dateCreated"
 
             // Create an EditText where the user can enter the phone number
             val phoneNumberEditText = EditText(requireContext())
@@ -121,10 +124,18 @@ class HolidayEdit : Fragment() {
                                 .setNegativeButton("No", null)
                                 .show()
                         } else {
-                            Toast.makeText(requireContext(), "Phone number must start with +44", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Phone number must start with +44",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } else {
-                        Toast.makeText(requireContext(), "Please enter a phone number", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Please enter a phone number",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
                 .setNegativeButton("Cancel", null)
@@ -152,6 +163,7 @@ class HolidayEdit : Fragment() {
             }
         }
     }
+
     private fun sendSms(message: String, to: String) {
         val db = Firebase.firestore
         val data = hashMapOf(
@@ -171,7 +183,8 @@ class HolidayEdit : Fragment() {
     }
 
     private fun loadHoliday(email: String, id: String) {
-        firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION).document(id).get()
+        firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION)
+            .document(id).get()
             .addOnSuccessListener { document ->
                 if (document != null) {
                     val holiday = document.toObject(HolidayDetails.Holiday::class.java)
@@ -182,6 +195,7 @@ class HolidayEdit : Fragment() {
 
                     val imageUrl = holiday?.imageUrl
                     if (!imageUrl.isNullOrEmpty()) {
+                        currentImageUrl = imageUrl // Store the current imageUrl
                         Picasso.get().load(imageUrl).into(holidayImageView)
                     }
                 }
@@ -198,7 +212,16 @@ class HolidayEdit : Fragment() {
             val lines = descriptionEditText.text.toString().split("\n")
             val isPurchased = checkBox.isChecked
 
-            val updatedHoliday = HolidayDetails.Holiday(title, lines, imageUrl = null, dateCreated = dateCreatedTextView.text.toString(), isPurchased = isPurchased)
+            // Use the current imageUrl if no new image has been selected
+            val imageUrl = if (imageUri != null) null else currentImageUrl
+
+            val updatedHoliday = HolidayDetails.Holiday(
+                title,
+                lines,
+                imageUrl = imageUrl,
+                dateCreated = dateCreatedTextView.text.toString(),
+                isPurchased = isPurchased
+            )
 
             if (imageUri != null) {
                 uploadImageAndSaveHoliday(email, id, updatedHoliday)
@@ -208,7 +231,11 @@ class HolidayEdit : Fragment() {
         }
     }
 
-    private fun uploadImageAndSaveHoliday(email: String, id: String, holiday: HolidayDetails.Holiday) {
+    private fun uploadImageAndSaveHoliday(
+        email: String,
+        id: String,
+        holiday: HolidayDetails.Holiday
+    ) {
         val imageRef = storage.reference.child("$IMAGES_FOLDER/${UUID.randomUUID()}")
         val uploadTask = imageRef.putFile(imageUri!!)
 
@@ -233,13 +260,14 @@ class HolidayEdit : Fragment() {
     }
 
     private fun setupImageResultLauncher() {
-        imageResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = result.data
-                imageUri = data?.data
-                holidayImageView.setImageURI(imageUri)
+        imageResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val data: Intent? = result.data
+                    imageUri = data?.data
+                    holidayImageView.setImageURI(imageUri)
+                }
             }
-        }
     }
 
     private fun setupDeleteButton(email: String, id: String) {
@@ -248,7 +276,8 @@ class HolidayEdit : Fragment() {
                 .setTitle("Delete Holiday")
                 .setMessage("Are you sure you want to delete this holiday?")
                 .setPositiveButton("Yes") { _, _ ->
-                    firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION).document(id).delete()
+                    firestore.collection(USERS_COLLECTION).document(email)
+                        .collection(HOLIDAYS_COLLECTION).document(id).delete()
                         .addOnSuccessListener {
                             Log.d(TAG, "DocumentSnapshot successfully deleted!")
                             navControl.navigateUp() // Go back to the previous screen
@@ -264,7 +293,8 @@ class HolidayEdit : Fragment() {
     }
 
     private fun updateHoliday(email: String, id: String, holiday: HolidayDetails.Holiday) {
-        firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION).document(id).set(holiday)
+        firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION)
+            .document(id).set(holiday)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot successfully updated!")
                 navControl.navigateUp() // Go back to the previous screen
