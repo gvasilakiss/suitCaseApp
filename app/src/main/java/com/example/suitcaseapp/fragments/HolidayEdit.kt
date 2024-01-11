@@ -23,6 +23,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.suitcaseapp.R
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -57,6 +61,7 @@ class HolidayEdit : Fragment() {
     private lateinit var dateCreatedTextView: EditText
     private var imageUri: Uri? = null
     private var currentImageUrl: String? = null
+    private lateinit var mapFragment: SupportMapFragment
 
 
     private lateinit var imageResultLauncher: ActivityResultLauncher<Intent>
@@ -88,6 +93,8 @@ class HolidayEdit : Fragment() {
             intent.type = "image/*"
             imageResultLauncher.launch(intent)
         }
+
+        mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
 
         val sendSmsButton: AppCompatImageButton = view.findViewById(R.id.sendSMSButton)
         sendSmsButton.setOnClickListener {
@@ -198,11 +205,31 @@ class HolidayEdit : Fragment() {
                         currentImageUrl = imageUrl // Store the current imageUrl
                         Picasso.get().load(imageUrl).into(holidayImageView)
                     }
+
+                    // Get the latitude and longitude from the Firestore document
+                    val latitude = document.getDouble("latitude")
+                    val longitude = document.getDouble("longitude")
+
+                    // If the latitude and longitude are not null, display the location on the map
+                    if (latitude != null && longitude != null) {
+                        mapFragment.getMapAsync { googleMap ->
+                            val location = LatLng(latitude, longitude)
+                            googleMap.addMarker(
+                                MarkerOptions().position(location)
+                                    .title(holiday?.title + " Location")
+                            )
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
+                        }
+                    }
                 }
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "get failed with ", exception)
-                // TODO: Show error message to the user
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error")
+                    .setMessage("Failed to load holiday")
+                    .setPositiveButton("OK", null)
+                    .show()
             }
     }
 
@@ -276,14 +303,37 @@ class HolidayEdit : Fragment() {
                 .setTitle("Delete Holiday")
                 .setMessage("Are you sure you want to delete this holiday?")
                 .setPositiveButton("Yes") { _, _ ->
-                    firestore.collection(USERS_COLLECTION).document(email)
-                        .collection(HOLIDAYS_COLLECTION).document(id).delete()
-                        .addOnSuccessListener {
-                            Log.d(TAG, "DocumentSnapshot successfully deleted!")
-                            navControl.navigateUp() // Go back to the previous screen
+                    // Get the holiday document
+                    val holidayRef = firestore.collection(USERS_COLLECTION).document(email)
+                        .collection(HOLIDAYS_COLLECTION).document(id)
+
+                    holidayRef.get()
+                        .addOnSuccessListener { document ->
+                            if (document != null) {
+                                val holiday = document.toObject(HolidayDetails.Holiday::class.java)
+
+                                // If the holiday has an image, delete it from Firebase Storage
+                                val imageUrl = holiday?.imageUrl
+                                if (!imageUrl.isNullOrEmpty()) {
+                                    val imageRef =
+                                        FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+                                    imageRef.delete()
+                                }
+
+                                // Delete the holiday document
+                                holidayRef.delete()
+                                    .addOnSuccessListener {
+                                        Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                                        navControl.navigateUp() // Go back to the previous screen
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w(TAG, "Error deleting document", e)
+                                        // TODO: Show error message to the user
+                                    }
+                            }
                         }
-                        .addOnFailureListener { e ->
-                            Log.w(TAG, "Error deleting document", e)
+                        .addOnFailureListener { exception ->
+                            Log.d(TAG, "get failed with ", exception)
                             // TODO: Show error message to the user
                         }
                 }
