@@ -45,6 +45,10 @@ class Home : Fragment() {
         // Setup the RecyclerView
         setupRecyclerView()
 
+        val showMapButton = view.findViewById<ImageButton>(R.id.showMap)
+        showMapButton.setOnClickListener {
+            navControl.navigate(R.id.action_homeFragment_to_itemsOnMap)
+        }
 
         // Find the ImageButton and set a click listener on it
         val menuButton = view.findViewById<ImageButton>(R.id.menuHome)
@@ -58,7 +62,6 @@ class Home : Fragment() {
         navControl = Navigation.findNavController(view)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-
     }
 
     // Setup the RecyclerView

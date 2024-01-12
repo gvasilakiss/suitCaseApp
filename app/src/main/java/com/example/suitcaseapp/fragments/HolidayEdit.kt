@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
+import java.util.Locale
 import java.util.UUID
 
 
@@ -62,6 +64,7 @@ class HolidayEdit : Fragment() {
     private var imageUri: Uri? = null
     private var currentImageUrl: String? = null
     private lateinit var mapFragment: SupportMapFragment
+    private var holidayAddress: String? = null
 
 
     private lateinit var imageResultLauncher: ActivityResultLauncher<Intent>
@@ -106,7 +109,7 @@ class HolidayEdit : Fragment() {
 
             // Format the SMS content
             val formattedMessage =
-                "Holiday Details:\n\nTitle: $holidayTitle\n\nDescription: $description\n\nDate: $dateCreated"
+                "Holiday Details:\n\nTitle: $holidayTitle\n\nDescription: $description\n\nDate: $dateCreated\n\nLocation: $holidayAddress"
 
             // Create an EditText where the user can enter the phone number
             val phoneNumberEditText = EditText(requireContext())
@@ -210,15 +213,24 @@ class HolidayEdit : Fragment() {
                     val latitude = document.getDouble("latitude")
                     val longitude = document.getDouble("longitude")
 
-                    // If the latitude and longitude are not null, display the location on the map
+                    // If the latitude and longitude are not null, convert them to an address
                     if (latitude != null && longitude != null) {
+                        val geocoder = context?.let { Geocoder(it, Locale.getDefault()) }
+                        val addresses = geocoder?.getFromLocation(latitude, longitude, 1)
+                        holidayAddress = addresses?.get(0)?.getAddressLine(0)
+
                         mapFragment.getMapAsync { googleMap ->
                             val location = LatLng(latitude, longitude)
                             googleMap.addMarker(
                                 MarkerOptions().position(location)
                                     .title(holiday?.title + " Location")
                             )
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f))
+                            googleMap.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    location,
+                                    5f
+                                )
+                            ) // Set zoom level to 5
                         }
                     }
                 }

@@ -9,7 +9,7 @@
         android:id="@+id/splashFragment"
         android:name="com.example.suitcaseapp.fragments.SplashScreen"
         android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash" >
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -21,7 +21,7 @@
         android:id="@+id/signInFragment"
         android:name="com.example.suitcaseapp.fragments.SignIn"
         android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" >
+        tools:layout="@layout/fragment_sign_in">
         <action
             android:id="@+id/action_signInFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -36,7 +36,7 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.suitcaseapp.fragments.SignUp"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" >
+        tools:layout="@layout/fragment_sign_up">
         <action
             android:id="@+id/action_signUpFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -48,7 +48,7 @@
         android:id="@+id/homeFragment"
         android:name="com.example.suitcaseapp.fragments.Home"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
@@ -58,11 +58,14 @@
         <action
             android:id="@+id/action_homeFragment_to_holidayEdit"
             app:destination="@id/holidayEdit" />
+        <action
+            android:id="@+id/action_homeFragment_to_itemsOnMap"
+            app:destination="@id/itemsOnMap" />
     </fragment>
     <fragment
         android:id="@+id/resetPass"
         android:name="com.example.suitcaseapp.fragments.ResetPass"
-        android:label="ResetPass" >
+        android:label="ResetPass">
         <action
             android:id="@+id/action_resetPass_to_signInFragment"
             app:destination="@id/signInFragment" />
@@ -71,7 +74,7 @@
         android:id="@+id/notesDetails"
         android:name="com.example.suitcaseapp.fragments.HolidayDetails"
         android:label="fragment_notes_details"
-        tools:layout="@layout/fragment_holiday_details" >
+        tools:layout="@layout/fragment_holiday_details">
         <action
             android:id="@+id/action_notesDetails_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -80,9 +83,13 @@
         android:id="@+id/holidayEdit"
         android:name="com.example.suitcaseapp.fragments.HolidayEdit"
         android:label="fragment_holiday_edit"
-        tools:layout="@layout/fragment_holiday_edit" >
+        tools:layout="@layout/fragment_holiday_edit">
         <action
             android:id="@+id/action_holidayEdit_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/itemsOnMap"
+        android:name="com.example.suitcaseapp.fragments.ItemsOnMap"
+        android:label="ItemsOnMap" />
 </navigation>
