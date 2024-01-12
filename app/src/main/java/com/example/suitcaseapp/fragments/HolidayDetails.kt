@@ -53,6 +53,13 @@ class HolidayDetails : Fragment() {
     // Selected location
     private var selectedLocation: LatLng? = null
 
+    // UI components
+    private val titleEditText by lazy { view?.findViewById<EditText>(R.id.notesTitle) }
+    private val descriptionEditText by lazy { view?.findViewById<EditText>(R.id.notesDescription) }
+    private val saveButton by lazy { view?.findViewById<AppCompatImageButton>(R.id.SaveNotes) }
+    private val selectImageButton by lazy { view?.findViewById<Button>(R.id.selectImageButton) }
+    private val checkBox by lazy { view?.findViewById<CheckBox>(R.id.chkItemsPurchased) }
+
     // Inflate the layout for this fragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -88,7 +95,7 @@ class HolidayDetails : Fragment() {
                 // Clear all markers
                 googleMap.clear()
                 // Add a marker at the clicked location
-                googleMap.addMarker(MarkerOptions().position(latLng).title("Holiday Location"))
+                googleMap.addMarker(MarkerOptions().position(latLng).title("Item Location"))
                 // Store the clicked location
                 selectedLocation = latLng
             }
@@ -97,13 +104,6 @@ class HolidayDetails : Fragment() {
 
     // Setup the add button and its functionality
     private fun setupAddButton() {
-        // Get references to the views
-        val notesTitle = view?.findViewById<EditText>(R.id.notesTitle)
-        val notesDescription = view?.findViewById<EditText>(R.id.notesDescription)
-        val saveButton = view?.findViewById<AppCompatImageButton>(R.id.SaveNotes)
-        val selectImageButton = view?.findViewById<Button>(R.id.selectImageButton)
-        val checkBox = view?.findViewById<CheckBox>(R.id.chkItemsPurchased)
-
         // Register for activity result to get the selected image
         val getContent =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -129,8 +129,8 @@ class HolidayDetails : Fragment() {
             val location = selectedLocation
             if (location != null) {
                 // Rest of your logic when location is available
-                val title = notesTitle?.text.toString()
-                val description = notesDescription?.text.toString()
+                val title = titleEditText?.text.toString()
+                val description = descriptionEditText?.text.toString()
                 val isPurchased = checkBox?.isChecked ?: false
 
                 if (title.isNotEmpty() && description.isNotEmpty()) {
@@ -145,13 +145,13 @@ class HolidayDetails : Fragment() {
                         location.longitude
                     )
                     // Clear the fields
-                    notesTitle?.setText("")
-                    notesDescription?.setText("")
+                    titleEditText?.setText("")
+                    descriptionEditText?.setText("")
                     imageView?.setImageDrawable(null)
                     // Navigate back to the home fragment
                     navControl.navigate(R.id.action_notesDetails_to_homeFragment)
                 } else {
-                    Toast.makeText(context, "Fields cant be empty", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Fields can't be empty", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 // Handle the case where the location is null

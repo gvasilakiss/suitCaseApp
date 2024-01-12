@@ -242,19 +242,34 @@ class HolidayEdit : Fragment() {
             // Use the current imageUrl if no new image has been selected
             val imageUrl = if (imageUri != null) null else currentImageUrl
 
-            val updatedHoliday = HolidayDetails.Holiday(
-                title,
-                lines,
-                imageUrl = imageUrl,
-                dateCreated = dateCreatedTextView.text.toString(),
-                isPurchased = isPurchased
-            )
+            firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION)
+                .document(id).get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        val originalLatitude = document.getDouble("latitude")
+                        val originalLongitude = document.getDouble("longitude")
 
-            if (imageUri != null) {
-                uploadImageAndSaveHoliday(email, id, updatedHoliday)
-            } else {
-                updateHoliday(email, id, updatedHoliday)
-            }
+                        val updatedHoliday = HolidayDetails.Holiday(
+                            title,
+                            lines,
+                            imageUrl = imageUrl,
+                            dateCreated = dateCreatedTextView.text.toString(),
+                            isPurchased = isPurchased,
+                            latitude = originalLatitude!!,
+                            longitude = originalLongitude!!
+                        )
+
+                        if (imageUri != null) {
+                            uploadImageAndSaveHoliday(email, id, updatedHoliday)
+                        } else {
+                            updateHoliday(email, id, updatedHoliday)
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "get failed with ", exception)
+                    // TODO: Show error message to the user
+                }
         }
     }
 
