@@ -57,7 +57,11 @@ class SignIn : Fragment() {
             if (isValidEmail(email) && isValidPassword(pass))
                 loginUser(email, pass)
             else
-                Toast.makeText(context, getString(R.string.invalid_email_or_password), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    getString(R.string.invalid_email_or_password),
+                    Toast.LENGTH_SHORT
+                ).show()
         }
     }
 
@@ -77,14 +81,20 @@ class SignIn : Fragment() {
                 if (user != null && user.isEmailVerified) {
                     navController.navigate(R.id.action_signInFragment_to_homeFragment)
                 } else {
-                    Toast.makeText(context,
-                        getString(R.string.email_is_not_verified), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.email_is_not_verified), Toast.LENGTH_SHORT
+                    ).show()
                     mAuth.signOut()
                 }
             } else {
                 when (val exception = signInTask.exception) {
                     is FirebaseAuthInvalidCredentialsException -> {
-                        Toast.makeText(context, getString(R.string.invalid_email_or_password), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            getString(R.string.invalid_email_or_password),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                     is FirebaseNetworkException -> {

@@ -1,13 +1,19 @@
 package com.example.suitcaseapp.fragments
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.suitcaseapp.HolidayAdapter
 import com.example.suitcaseapp.R
@@ -40,21 +46,18 @@ class Home : Fragment() {
 
         // Initialize Firebase and navigation controller
         init(view)
+
         // Setup the newHoliday button click listener
         addNewHoliday()
+
         // Setup the RecyclerView
         setupRecyclerView()
 
-        val showMapButton = view.findViewById<ImageButton>(R.id.showMap)
-        showMapButton.setOnClickListener {
-            navControl.navigate(R.id.action_homeFragment_to_itemsOnMap)
-        }
+        // Setup the showMap button click listener
+        setupShowMapButton(view)
 
-        // Find the ImageButton and set a click listener on it
-        val menuButton = view.findViewById<ImageButton>(R.id.menuHome)
-        menuButton.setOnClickListener {
-            logoutUser()
-        }
+        // Setup the menu button click listener
+        setupMenuButton(view)
     }
 
     // Initialize Firebase and navigation controller
@@ -66,10 +69,8 @@ class Home : Fragment() {
 
     // Setup the RecyclerView
     private fun setupRecyclerView() {
-        // Initialize the RecyclerView
         val recyclerView = view?.findViewById<RecyclerView>(R.id.holidayRecyclerView)
 
-        // Fetch the holiday data from Firestore
         val currentUser = auth.currentUser
         currentUser?.let { user ->
             val email = user.email
@@ -77,16 +78,16 @@ class Home : Fragment() {
                 val query = firestore.collection(USERS_COLLECTION).document(email)
                     .collection(HOLIDAYS_COLLECTION)
 
-                // Configure the adapter options
                 val options = FirestoreRecyclerOptions.Builder<HolidayDetails.Holiday>()
                     .setQuery(query, HolidayDetails.Holiday::class.java)
                     .build()
 
-                // Initialize the adapter
                 val adapter = HolidayAdapter(options)
 
-                // Set the adapter on the RecyclerView
                 recyclerView?.adapter = adapter
+
+                // Setup swipe-to-delete functionality
+                setupSwipeToDelete(recyclerView, adapter)
 
                 // Start listening for Firestore updates
                 adapter.startListening()
@@ -94,26 +95,129 @@ class Home : Fragment() {
         }
     }
 
+    // Setup swipe-to-delete functionality
+    private fun setupSwipeToDelete(recyclerView: RecyclerView?, adapter: HolidayAdapter) {
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // Swipe-to-delete action
+                val position = viewHolder.adapterPosition
+                adapter.deleteItem(position, requireContext())
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                // Call default implementation first
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+
+                // Check if swiping to the left (negative dX)
+                val isSwipeLeft = dX < 0
+
+                // Get the background color for the swipe
+                val backgroundColor = Color.parseColor("#FF0000")
+
+                // Set the bounds for the background
+                val backgroundBounds = Rect(
+                    viewHolder.itemView.right + dX.toInt(),
+                    viewHolder.itemView.top,
+                    viewHolder.itemView.right,
+                    viewHolder.itemView.bottom
+                )
+
+                // Set the paint for the background
+                val backgroundPaint = Paint().apply {
+                    color = backgroundColor
+                }
+
+                // Draw the background
+                c.drawRect(backgroundBounds, backgroundPaint)
+
+                // Get the delete icon drawable
+                val deleteIconDrawable =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.baseline_delete_24)
+
+                // Calculate the position for the delete icon
+                val iconMargin =
+                    (viewHolder.itemView.height - deleteIconDrawable!!.intrinsicHeight) / 2
+                val iconLeft =
+                    viewHolder.itemView.right - iconMargin - deleteIconDrawable.intrinsicWidth + dX.toInt()
+                val iconRight = viewHolder.itemView.right - iconMargin + dX.toInt()
+                val iconTop =
+                    viewHolder.itemView.top + (viewHolder.itemView.height - deleteIconDrawable.intrinsicHeight) / 2
+                val iconBottom = iconTop + deleteIconDrawable.intrinsicHeight
+
+                // Set the bounds for the delete icon
+                deleteIconDrawable.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                // Draw the delete icon
+                deleteIconDrawable.draw(c)
+
+                // Hide the delete icon when swiping is completed
+                if (!isCurrentlyActive) {
+                    deleteIconDrawable.alpha = 0
+                }
+            }
+        })
+
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
     // Setup the add button click listener
     private fun addNewHoliday() {
-        //on click button navigate to notesDetails
         val addButton = view?.findViewById<FloatingActionButton>(R.id.addButton) ?: return
         addButton.setOnClickListener {
-            // Check if navControl is initialized and if the destination exists in the navigation graph
             navControl.navigate(R.id.action_homeFragment_to_notesDetails)
         }
     }
 
+    // Setup the showMap button click listener
+    private fun setupShowMapButton(view: View) {
+        val showMapButton = view.findViewById<ImageButton>(R.id.showMap)
+        showMapButton.setOnClickListener {
+            navControl.navigate(R.id.action_homeFragment_to_itemsOnMap)
+        }
+    }
+
+    // Setup the menu button click listener
+    private fun setupMenuButton(view: View) {
+        val menuButton = view.findViewById<ImageButton>(R.id.menuHome)
+        menuButton.setOnClickListener {
+            logoutUser()
+        }
+    }
+
+    // Logout the user and navigate to the sign-in screen
     private fun logoutUser() {
         auth.signOut()
         navControl.navigate(R.id.action_homeFragment_to_signInFragment)
     }
 
     companion object {
-        // Constant for the name of the 'holidays' collection in Firestore
         private const val HOLIDAYS_COLLECTION = "holidays"
-
-        // Constant for the name of the 'users' collection in Firestore
         private const val USERS_COLLECTION = "users"
     }
 }

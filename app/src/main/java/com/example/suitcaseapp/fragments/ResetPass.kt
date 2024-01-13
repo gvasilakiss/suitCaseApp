@@ -51,7 +51,8 @@ class ResetPass : Fragment() {
         mAuth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(context, "Email sent to reset your password", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Email sent to reset your password", Toast.LENGTH_SHORT)
+                        .show()
                     navController.navigate(R.id.action_resetPass_to_signInFragment)
                 } else {
                     Toast.makeText(context, "Email not sent", Toast.LENGTH_SHORT).show()

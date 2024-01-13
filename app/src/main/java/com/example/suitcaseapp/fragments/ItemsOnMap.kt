@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.suitcaseapp.R
-import com.example.suitcaseapp.databinding.FragmentItemsOnMapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -19,8 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
 class ItemsOnMap : Fragment(), OnMapReadyCallback {
-
-    private lateinit var binding: FragmentItemsOnMapBinding
+    
     private lateinit var firestore: FirebaseFirestore
     private lateinit var googleMap: GoogleMap
     private lateinit var auth: FirebaseAuth

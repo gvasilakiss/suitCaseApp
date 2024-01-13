@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_launcher_background"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"/>
+        android:layout_marginBottom="32dp" />
 
     <EditText
         android:id="@+id/signInEmailEditText"
@@ -57,7 +57,7 @@
         android:text="@string/don_t_have_an_account_sign_up_below"
         android:layout_below="@id/signInBtn"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
 
     <Button
         android:id="@+id/signUpBtn"

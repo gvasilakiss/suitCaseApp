@@ -40,6 +40,7 @@ import java.util.Locale
 import java.util.UUID
 
 
+@Suppress("DEPRECATION")
 class HolidayEdit : Fragment() {
 
     companion object {
@@ -361,7 +362,6 @@ class HolidayEdit : Fragment() {
                         }
                         .addOnFailureListener { exception ->
                             Log.d(TAG, "get failed with ", exception)
-                            // TODO: Show error message to the user
                         }
                 }
                 .setNegativeButton("No", null)
