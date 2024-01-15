@@ -6,17 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".fragments.SplashScreen">
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="324dp"
-        android:gravity="center_horizontal"
-        android:text="SuitCase"
-        android:textSize="60sp"
-        android:textStyle="italic"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="404dp"
+        android:layout_height="115dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/logo"
+        android:contentDescription="@string/logo"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="3dp"
+        tools:layout_editor_absoluteY="150dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

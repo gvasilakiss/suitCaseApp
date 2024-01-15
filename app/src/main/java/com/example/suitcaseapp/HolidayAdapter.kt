@@ -39,8 +39,9 @@ class HolidayAdapter(options: FirestoreRecyclerOptions<HolidayDetails.Holiday>) 
      *
      * @param position The adapter position of the item to be deleted.
      * @param context The context in which the function is called. Used to create dialogs.
+     * @param viewHolder The ViewHolder of the swiped item. Used to revert the swipe action if the user cancels the deletion.
      */
-    fun deleteItem(position: Int, context: Context) {
+    fun deleteItem(position: Int, context: Context, viewHolder: RecyclerView.ViewHolder) {
         // Get the holiday at the specified position
         val holiday = snapshots.getSnapshot(position).toObject(HolidayDetails.Holiday::class.java)
 
@@ -86,10 +87,18 @@ class HolidayAdapter(options: FirestoreRecyclerOptions<HolidayDetails.Holiday>) 
                         .show()
                 }
             }
-            .setNegativeButton("No", null)
+            .setNegativeButton("No") { _, _ ->
+                // User cancelled the deletion, revert the swipe action
+                notifyItemChanged(viewHolder.adapterPosition)
+            }
             .show()
     }
 
+    /**
+     * Deletes the document at the specified position in the RecyclerView.
+     *
+     * @param position The adapter position of the document to be deleted.
+     */
     private fun deleteDocument(position: Int) {
         // Get the reference of the Firestore document at the specified position
         val documentReference = snapshots.getSnapshot(position).reference
@@ -102,6 +111,7 @@ class HolidayAdapter(options: FirestoreRecyclerOptions<HolidayDetails.Holiday>) 
             // Handle failure to delete document
         }
     }
+
 
     // Inflate the item layout and create a ViewHolder. This method is called when the RecyclerView
     // needs a new ViewHolder to represent an item.

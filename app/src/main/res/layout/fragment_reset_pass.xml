@@ -8,8 +8,8 @@
     <ImageView
         android:id="@+id/appLogoSignIn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background"
+        android:layout_height="120dp"
+        android:src="@drawable/logo"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp" />
 

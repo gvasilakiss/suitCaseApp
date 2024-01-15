@@ -44,6 +44,6 @@ class SplashScreen : Fragment() {
                 // Redirect to login page
                 navController.navigate(R.id.action_splashFragment_to_signInFragment)
             }
-        }, 2000)
+        }, 3000)
     }
 }

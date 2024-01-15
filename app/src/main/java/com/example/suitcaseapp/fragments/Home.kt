@@ -105,13 +105,13 @@ class Home : Fragment() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                TODO("Not yet implemented")
+                return false
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // Swipe-to-delete action
                 val position = viewHolder.adapterPosition
-                adapter.deleteItem(position, requireContext())
+                adapter.deleteItem(position, requireContext(), viewHolder)
             }
 
             override fun onChildDraw(

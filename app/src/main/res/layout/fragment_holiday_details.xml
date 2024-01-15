@@ -13,8 +13,8 @@
 
         <ImageButton
             android:id="@+id/SaveNotes"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="65dp"
+            android:layout_height="55dp"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="16dp"
@@ -22,6 +22,25 @@
             android:importantForAccessibility="no"
             android:src="@drawable/baseline_check_24"
             app:tint="@color/blue" />
+
+        <ImageView
+            android:id="@+id/appLogo"
+            android:layout_width="94dp"
+            android:layout_height="43dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/icon_logo"
+            android:contentDescription="@string/logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="90dp"
+            android:layout_marginTop="14dp"
+            android:text="@string/add_new_holiday"
+            android:textColor="@color/blue"
+            android:textSize="32sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
@@ -91,13 +110,4 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="14dp"
-        android:text="@string/add_new_holiday"
-        android:textColor="@color/blue"
-        android:textSize="32sp"
-        android:textStyle="bold" />
 </RelativeLayout>
