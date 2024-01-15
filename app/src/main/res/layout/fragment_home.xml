@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -16,20 +17,8 @@
             android:layout_width="268dp"
             android:layout_height="72dp"
             android:layout_marginBottom="32dp"
-            android:src="@drawable/logo"
-            android:contentDescription="@string/logo" />
-
-        <ImageButton
-            android:id="@+id/showMap"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:importantForAccessibility="no"
-            android:src="@drawable/baseline_gps_fixed_24"
-            app:tint="@color/blue" />
+            android:contentDescription="@string/logo"
+            android:src="@drawable/logo" />
 
         <ImageButton
             android:id="@+id/menuHome"
@@ -37,6 +26,8 @@
             android:layout_height="36dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="31dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:importantForAccessibility="no"
             android:src="@drawable/baseline_folder_shared_24"
@@ -49,7 +40,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/title_bar_layout"
-        android:layout_marginTop="32dp"
         android:layout_marginBottom="15dp"
         android:background="@color/white"
         android:padding="16dp"
@@ -59,16 +49,35 @@
         app:layout_constraintTop_toBottomOf="@+id/title_bar_layout"
         app:layout_constraintVertical_bias="0.0" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/bottom_menu"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/baseline_add_24"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/showMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Map"
+            android:drawableLeft="@drawable/baseline_gps_fixed_24"
+            android:drawablePadding="8dp"
+            android:backgroundTint="@color/blue" />
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
-        android:importantForAccessibility="no" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="36dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/baseline_add_24"
+        tools:ignore="RelativeOverlap" />
 
 
 </RelativeLayout>

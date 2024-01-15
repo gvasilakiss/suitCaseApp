@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -196,7 +197,7 @@ class Home : Fragment() {
 
     // Setup the showMap button click listener
     private fun setupShowMapButton(view: View) {
-        val showMapButton = view.findViewById<ImageButton>(R.id.showMap)
+        val showMapButton = view.findViewById<Button>(R.id.showMap)
         showMapButton.setOnClickListener {
             navControl.navigate(R.id.action_homeFragment_to_itemsOnMap)
         }
