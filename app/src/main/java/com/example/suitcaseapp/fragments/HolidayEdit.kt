@@ -201,7 +201,7 @@ class HolidayEdit : Fragment() {
                     val holiday = document.toObject(HolidayDetails.Holiday::class.java)
                     holidayTitleEditText.setText(holiday?.title)
                     descriptionEditText.setText(holiday?.lines?.joinToString("\n"))
-                    checkBox.isChecked = holiday?.isPurchased ?: false
+                    checkBox.isChecked = holiday?.purchased ?: false
                     dateCreatedTextView.setText(holiday?.dateCreated)
 
                     val imageUrl = holiday?.imageUrl
@@ -250,7 +250,7 @@ class HolidayEdit : Fragment() {
         saveButton.setOnClickListener {
             val title = holidayTitleEditText.text.toString()
             val lines = descriptionEditText.text.toString().split("\n")
-            val isPurchased = checkBox.isChecked
+            val purchased = checkBox.isChecked
 
             // Use the current imageUrl if no new image has been selected
             val imageUrl = if (imageUri != null) null else currentImageUrl
@@ -267,7 +267,7 @@ class HolidayEdit : Fragment() {
                             lines,
                             imageUrl = imageUrl,
                             dateCreated = dateCreatedTextView.text.toString(),
-                            isPurchased = isPurchased,
+                            purchased = purchased,
                             latitude = originalLatitude!!,
                             longitude = originalLongitude!!
                         )

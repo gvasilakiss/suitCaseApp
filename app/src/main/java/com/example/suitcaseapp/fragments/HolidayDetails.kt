@@ -167,7 +167,7 @@ class HolidayDetails : Fragment() {
         val lines: List<String> = listOf(), // The lines of description for the holiday
         var imageUrl: String? = null, // The URL of the image for the holiday (nullable)
         val dateCreated: String = "", // The date the holiday was created
-        val isPurchased: Boolean = false, // Whether the holiday has been purchased
+        val purchased: Boolean = false, // Whether the holiday has been purchased
         val latitude: Double = 1.0, // The latitude of the location where the holiday was created
         val longitude: Double = 1.0 // The longitude of the location where the holiday was created
     )
@@ -178,7 +178,7 @@ class HolidayDetails : Fragment() {
         description: String,
         imageUri: Uri?,
         dateCreated: String,
-        isPurchased: Boolean,
+        purchased: Boolean,
         latitude: Double,
         longitude: Double
     ) {
@@ -199,7 +199,7 @@ class HolidayDetails : Fragment() {
                             lines,
                             imageUrl,
                             dateCreated,
-                            isPurchased,
+                            purchased,
                             latitude,
                             longitude
                         )
@@ -212,7 +212,7 @@ class HolidayDetails : Fragment() {
                         lines,
                         null,
                         dateCreated,
-                        isPurchased,
+                        purchased,
                         latitude,
                         longitude
                     )
