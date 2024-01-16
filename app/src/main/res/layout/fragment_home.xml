@@ -9,14 +9,14 @@
 
     <RelativeLayout
         android:id="@+id/title_bar_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="103dp">
 
         <ImageView
             android:id="@+id/appLogoSignIn"
             android:layout_width="268dp"
             android:layout_height="72dp"
-            android:layout_marginBottom="32dp"
+            android:layout_centerInParent="true"
             android:contentDescription="@string/logo"
             android:src="@drawable/logo" />
 
@@ -24,10 +24,7 @@
             android:id="@+id/menuHome"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="31dp"
+            android:layout_marginEnd="15dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:importantForAccessibility="no"
             android:src="@drawable/baseline_folder_shared_24"
@@ -62,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Show Map"
-            android:drawableLeft="@drawable/baseline_gps_fixed_24"
+            android:drawableLeft="@android:drawable/ic_menu_mapmode"
             android:drawablePadding="8dp"
             android:backgroundTint="@color/blue" />
     </LinearLayout>

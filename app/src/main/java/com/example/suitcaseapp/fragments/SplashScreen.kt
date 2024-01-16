@@ -7,6 +7,8 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -34,6 +36,10 @@ class SplashScreen : Fragment() {
         auth = FirebaseAuth.getInstance()
         navController = Navigation.findNavController(view)
 
+        val logoImageView: ImageView = view.findViewById(R.id.imageView)
+        val fadeInAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
+        logoImageView.startAnimation(fadeInAnimation)
+
         Handler(Looper.myLooper()!!).postDelayed({
             if (auth.currentUser != null) {
                 // User is signed in
@@ -44,6 +50,6 @@ class SplashScreen : Fragment() {
                 // Redirect to login page
                 navController.navigate(R.id.action_splashFragment_to_signInFragment)
             }
-        }, 3000)
+        }, 200)
     }
 }

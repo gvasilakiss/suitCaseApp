@@ -281,7 +281,8 @@ class HolidayEdit : Fragment() {
                 }
                 .addOnFailureListener { exception ->
                     Log.d(TAG, "get failed with ", exception)
-                    // TODO: Show error message to the user
+                    Toast.makeText(requireContext(), "Failed to update holiday", Toast.LENGTH_SHORT)
+                        .show()
                 }
         }
     }
@@ -309,7 +310,11 @@ class HolidayEdit : Fragment() {
                 updateHoliday(email, id, holiday)
             } else {
                 // Handle failures
-                // TODO: Show error message to the user
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error")
+                    .setMessage("Failed to upload image")
+                    .setPositiveButton("OK", null)
+                    .show()
             }
         }
     }
@@ -352,9 +357,19 @@ class HolidayEdit : Fragment() {
                                 holidayRef.delete()
                                     .addOnSuccessListener {
                                         Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Holiday deleted",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         navControl.navigateUp() // Go back to the previous screen
                                     }
                                     .addOnFailureListener { e ->
+                                        AlertDialog.Builder(requireContext())
+                                            .setTitle("Error")
+                                            .setMessage("Failed to delete holiday")
+                                            .setPositiveButton("OK", null)
+                                            .show()
                                         Log.w(TAG, "Error deleting document", e)
                                         // TODO: Show error message to the user
                                     }
@@ -362,6 +377,11 @@ class HolidayEdit : Fragment() {
                         }
                         .addOnFailureListener { exception ->
                             Log.d(TAG, "get failed with ", exception)
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage("Failed to delete holiday" + exception.message)
+                                .setPositiveButton("OK", null)
+                                .show()
                         }
                 }
                 .setNegativeButton("No", null)
@@ -374,6 +394,7 @@ class HolidayEdit : Fragment() {
             .document(id).set(holiday)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot successfully updated!")
+                Toast.makeText(requireContext(), "Holiday updated", Toast.LENGTH_SHORT).show()
                 navControl.navigateUp() // Go back to the previous screen
             }
             .addOnFailureListener { e ->
