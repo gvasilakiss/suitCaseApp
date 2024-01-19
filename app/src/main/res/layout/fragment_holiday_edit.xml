@@ -6,67 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".fragments.HolidayEdit">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/title_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="80dp">
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/appLogo"
+            android:layout_width="0dp"
+            android:layout_height="43dp"
+            android:layout_weight="1"
+            android:src="@drawable/icon_logo"
+            android:contentDescription="@string/logo" />
+
+        <TextView
+            android:layout_width="108dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/holiday_title"
+            android:textColor="@color/blue"
+            android:textSize="32sp"
+            android:textStyle="bold" />
 
         <ImageButton
-            android:id="@+id/saveHolidayButton"
-            android:layout_width="36dp"
+            android:id="@+id/sendSMSButton"
+            android:layout_width="0dp"
             android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:importantForAccessibility="no"
-            android:src="@drawable/baseline_check_24"
+            android:src="@drawable/ic_email"
             app:tint="@color/blue" />
 
         <ImageButton
             android:id="@+id/deleteHolidayButton"
-            android:layout_width="36dp"
+            android:layout_width="0dp"
             android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="70dp"
+            android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:importantForAccessibility="no"
             android:src="@drawable/baseline_delete_24"
             app:tint="@color/blue" />
 
         <ImageButton
-            android:id="@+id/sendSMSButton"
-            android:layout_width="36dp"
+            android:id="@+id/saveHolidayButton"
+            android:layout_width="0dp"
             android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="120dp"
+            android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:importantForAccessibility="no"
-            android:src="@drawable/baseline_email_24"
+            android:src="@drawable/baseline_check_24"
             app:tint="@color/blue" />
 
-        <ImageView
-            android:id="@+id/appLogo"
-            android:layout_width="94dp"
-            android:layout_height="43dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="32dp"
-            android:src="@drawable/icon_logo"
-            android:contentDescription="@string/logo" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="90dp"
-            android:layout_marginTop="14dp"
-            android:text="@string/holiday_title"
-            android:textColor="@color/blue"
-            android:textSize="32sp"
-            android:textStyle="bold" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -102,17 +96,25 @@
 
         <EditText
             android:id="@+id/holidayDateCreatedEditText"
-            android:layout_width="271dp"
+            android:layout_width="381dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="8dp"
             android:enabled="false"
             android:gravity="top"
+            android:importantForAutofill="no"
+            android:inputType="text"
             android:padding="12dp"
             android:textColor="@color/black"
             android:textSize="20sp"
-            android:importantForAutofill="no"
-            android:inputType="text"
             tools:ignore="TextFields" />
+
+        <EditText
+            android:id="@+id/priceEditText"
+            android:layout_width="184dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/price"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal" />
 
         <CheckBox
             android:id="@+id/chkItemsPurchased"

@@ -1,12 +1,10 @@
 package com.example.suitcaseapp.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -16,12 +14,24 @@ import com.example.suitcaseapp.databinding.FragmentSignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
+/**
+ * This fragment is used for user registration.
+ * It allows the user to sign up with an email and password.
+ */
 class SignUp : Fragment() {
 
+    // Firebase authentication instance
     private lateinit var auth: FirebaseAuth
+
+    // Navigation controller instance
     private lateinit var navControl: NavController
+
+    // Binding instance for this fragment
     private lateinit var binding: FragmentSignUpBinding
 
+    /**
+     * Inflates the layout for this fragment
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,6 +40,10 @@ class SignUp : Fragment() {
         return binding.root
     }
 
+    /**
+     * Called immediately after onCreateView has returned
+     * Initializes Firebase and navigation controller, and sets up the event handlers
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -37,38 +51,25 @@ class SignUp : Fragment() {
         registerEvents()
     }
 
+    /**
+     * Initializes Firebase and navigation controller
+     */
     private fun init(view: View) {
         navControl = Navigation.findNavController(view)
         auth = FirebaseAuth.getInstance()
-
-        val signUpButton = view.findViewById<Button>(R.id.loginBtn)
-        val emailEditText = view.findViewById<EditText>(R.id.emailEditText)
-        val passwordEditText = view.findViewById<EditText>(R.id.passwordEditText)
-
-        signUpButton.setOnClickListener {
-            val email = emailEditText.text.toString()
-            val password = passwordEditText.text.toString()
-
-            if (email.isNotEmpty() && password.isNotEmpty()) {
-                createUser(email, password)
-            } else {
-                // Show an error message for empty fields
-            }
-        }
-
-        // Redirect to login page if user clicks on "Already have an account?"
-        val loginRedirect = view.findViewById<TextView>(R.id.nextBtn)
-        loginRedirect.setOnClickListener {
-        }
     }
 
+    /**
+     * Sets up the event handlers for the buttons
+     */
     private fun registerEvents() {
 
-        // Redirect to login page if user clicks on Login button"
+        // Redirect to login page if user clicks on Login button
         binding.loginBtn.setOnClickListener {
             navControl.navigate(R.id.action_signUpFragment_to_signInFragment)
         }
 
+        // Create a new user if user clicks on Sign Up button
         binding.signUpButton.setOnClickListener {
             val email = binding.emailEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
@@ -77,11 +78,19 @@ class SignUp : Fragment() {
                 createUser(email, password)
             } else {
                 // Show an error message for empty fields
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error")
+                    .setMessage(getString(R.string.please_fill_in_all_the_fields))
+                    .setPositiveButton("OK", null)
+                    .show()
             }
         }
     }
 
-    // Create a new user with email and password - check if email and password are valid
+    /**
+     * Creates a new user with the given email and password
+     * Checks if the email and password are valid before creating the user
+     */
     private fun createUser(email: String, password: String) {
         if (isValidEmail(email) && isValidPassword(password)) {
             auth.createUserWithEmailAndPassword(email, password)
@@ -93,13 +102,13 @@ class SignUp : Fragment() {
                                 if (emailTask.isSuccessful) {
                                     Toast.makeText(
                                         context,
-                                        "Registered successfully and Verification email sent.",
+                                        getString(R.string.registered_successfully_and_verification_email_sent),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        "Registered successfully but Failed to send verification email.",
+                                        getString(R.string.registered_successfully_but_failed_to_send_verification_email),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -109,26 +118,40 @@ class SignUp : Fragment() {
                         val exception = task.exception
                         if (exception is FirebaseAuthUserCollisionException) {
                             // Email already exists
-                            Toast.makeText(context, "Email already exists.", Toast.LENGTH_SHORT)
+                            Toast.makeText(
+                                context,
+                                getString(R.string.email_already_exists), Toast.LENGTH_SHORT
+                            )
                                 .show()
                         } else {
                             // Other authentication failures
-                            Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT)
+                            Toast.makeText(
+                                context,
+                                getString(R.string.authentication_failed), Toast.LENGTH_SHORT
+                            )
                                 .show()
                         }
                     }
                 }
         } else {
-            Toast.makeText(context, "Invalid email or password format", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                getString(R.string.invalid_email_or_password_format), Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-
+    /**
+     * Checks if the given email is valid
+     */
     private fun isValidEmail(email: String): Boolean {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
         return email.matches(emailPattern.toRegex()) // Email should match the email pattern
     }
 
+    /**
+     * Checks if the given password is valid
+     */
     private fun isValidPassword(password: String): Boolean {
         return password.length >= 6 // Password should have at least 6 characters
     }

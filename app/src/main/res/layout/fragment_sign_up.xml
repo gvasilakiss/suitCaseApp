@@ -17,19 +17,23 @@
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:layout_below="@id/appLogo"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="2dp" />
 
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:layout_below="@id/emailEditText"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_password"
+        android:drawablePadding="2dp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -37,7 +41,9 @@
         android:hint="Confirm Password"
         android:inputType="textPassword"
         android:layout_below="@id/passwordEditText"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:drawableLeft="@drawable/ic_password"
+        android:drawablePadding="2dp" />
 
     <Button
         android:id="@+id/signUpButton"

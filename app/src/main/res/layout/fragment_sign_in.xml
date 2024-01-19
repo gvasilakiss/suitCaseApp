@@ -13,6 +13,7 @@
         android:layout_marginBottom="32dp"
         android:contentDescription="@string/logo" />
 
+
     <EditText
         android:id="@+id/signInEmailEditText"
         android:layout_width="match_parent"
@@ -21,7 +22,10 @@
         android:inputType="textEmailAddress"
         android:layout_below="@id/appLogoSignIn"
         android:layout_marginTop="16dp"
-        android:autofillHints="Enter your email" />
+        android:autofillHints="Enter your email"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="2dp" />
+
 
     <EditText
         android:id="@+id/signInPasswordText"
@@ -31,7 +35,9 @@
         android:inputType="textPassword"
         android:layout_below="@id/signInEmailEditText"
         android:layout_marginTop="16dp"
-        android:autofillHints="Enter your password" />
+        android:autofillHints="Enter your password"
+        android:drawableStart="@drawable/ic_password"
+        android:drawablePadding="2dp" />
 
     <TextView
         android:id="@+id/forgotPasswordRedirect"

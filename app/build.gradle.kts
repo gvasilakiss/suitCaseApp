@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("org.jetbrains.dokka") version "1.9.10"
 }
 
 android {
@@ -63,4 +64,9 @@ dependencies {
     implementation("com.google.firebase:firebase-functions:20.4.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
+    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.10")
+}
+
+tasks.dokkaHtml.configure {
+    outputDirectory.set(buildDir.resolve("dokka"))
 }

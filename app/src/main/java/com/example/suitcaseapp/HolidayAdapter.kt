@@ -15,14 +15,20 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.storage.FirebaseStorage
 
 /**
- * Define the adapter for the RecyclerView. This adapter is responsible for creating
- * the view holders and binding data to them.
+ * Adapter for the RecyclerView that displays the list of holidays.
+ * This adapter is responsible for creating the view holders and binding data to them.
+ *
+ * @property options FirestoreRecyclerOptions that configure the adapter.
  */
 class HolidayAdapter(options: FirestoreRecyclerOptions<HolidayDetails.Holiday>) :
     FirestoreRecyclerAdapter<HolidayDetails.Holiday, HolidayAdapter.HolidayViewHolder>(options) {
 
-    // ViewHolder class. Each instance represents a single item in the list.
-    // It contains the views that will be filled with the data from a single object from the data set.
+    /**
+     * ViewHolder for the RecyclerView. Each instance represents a single item in the list.
+     * It contains the views that will be filled with the data from a single object from the data set.
+     *
+     * @property view The root view of the item layout.
+     */
     class HolidayViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         // Reference to the title TextView in the item layout
         val titleTextView: TextView = view.findViewById(R.id.holidayTitle)
@@ -113,8 +119,13 @@ class HolidayAdapter(options: FirestoreRecyclerOptions<HolidayDetails.Holiday>) 
     }
 
 
-    // Inflate the item layout and create a ViewHolder. This method is called when the RecyclerView
-    // needs a new ViewHolder to represent an item.
+    /**
+     * Creates a new ViewHolder to represent an item.
+     *
+     * @param parent The ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A new ViewHolder that holds a View of the given view type.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolidayViewHolder {
         // Inflate the item layout
         val view = LayoutInflater.from(parent.context)
@@ -123,8 +134,14 @@ class HolidayAdapter(options: FirestoreRecyclerOptions<HolidayDetails.Holiday>) 
         return HolidayViewHolder(view)
     }
 
-    // Bind data to the item. This method is called to update the contents of the ViewHolder
-    // to reflect an item in the position 'position' in the data set.
+    /**
+     * Binds the data to the item. This method is called to update the contents of the ViewHolder
+     * to reflect an item in the position 'position' in the data set.
+     *
+     * @param holder The ViewHolder which should be updated to represent the contents of the item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     * @param model The data object of the item at the given position in the data set.
+     */
     override fun onBindViewHolder(
         holder: HolidayViewHolder,
         position: Int,

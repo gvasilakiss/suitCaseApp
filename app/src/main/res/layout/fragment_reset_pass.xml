@@ -31,7 +31,9 @@
         android:autofillHints="Enter your email"
         android:hint="@string/emailResetTxt"
         android:inputType="text"
-        tools:ignore="TextFields" />
+        tools:ignore="TextFields"
+        android:drawableLeft="@drawable/ic_email"
+        android:drawablePadding="2dp" />
 
     <Button
         android:layout_width="match_parent"

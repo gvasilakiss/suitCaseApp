@@ -14,12 +14,24 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 
+/**
+ * This fragment is used for user authentication.
+ * It allows the user to sign in with an email and password.
+ */
 class SignIn : Fragment() {
 
+    // Navigation controller instance
     private lateinit var navController: NavController
+
+    // Firebase authentication instance
     private lateinit var mAuth: FirebaseAuth
+
+    // Binding instance for this fragment
     private lateinit var binding: FragmentSignInBinding
 
+    /**
+     * Inflates the layout for this fragment
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,6 +41,10 @@ class SignIn : Fragment() {
         return binding.root
     }
 
+    /**
+     * Called immediately after onCreateView has returned
+     * Initializes Firebase and navigation controller, and sets up the event handlers
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -41,6 +57,7 @@ class SignIn : Fragment() {
             return
         }
 
+        // Redirect to sign up page if user clicks on Sign Up button
         binding.signUpBtn.setOnClickListener {
             navController.navigate(R.id.action_signInFragment_to_signUpFragment)
         }
@@ -50,6 +67,7 @@ class SignIn : Fragment() {
             navController.navigate(R.id.action_signInFragment_to_resetPass)
         }
 
+        // Sign in the user if user clicks on Sign In button
         binding.signInBtn.setOnClickListener {
             val email = binding.signInEmailEditText.text.toString().trim()
             val pass = binding.signInPasswordText.text.toString()
@@ -65,15 +83,24 @@ class SignIn : Fragment() {
         }
     }
 
+    /**
+     * Checks if the given email is valid
+     */
     private fun isValidEmail(email: String): Boolean {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
         return email.matches(emailPattern.toRegex()) //Email should be in the correct format
     }
 
+    /**
+     * Checks if the given password is valid
+     */
     private fun isValidPassword(password: String): Boolean {
         return password.length >= 6 //Password should have at least 6 characters
     }
 
+    /**
+     * Logs in the user with the given email and password
+     */
     private fun loginUser(email: String, pass: String) {
         mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener { signInTask ->
             if (signInTask.isSuccessful) {
@@ -109,6 +136,9 @@ class SignIn : Fragment() {
         }
     }
 
+    /**
+     * Initializes Firebase and navigation controller
+     */
     private fun init(view: View) {
         navController = Navigation.findNavController(view)
         mAuth = FirebaseAuth.getInstance()

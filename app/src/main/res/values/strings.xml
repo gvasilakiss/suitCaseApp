@@ -16,4 +16,18 @@
     <string name="email_is_not_verified">Email is not verified</string>
     <string name="logo">Logo</string>
     <string name="select_image">Select Image</string>
+    <string name="invalid_email_format">Invalid email format</string>
+    <string name="email_sent_to_reset_your_password">Email sent to reset your password</string>
+    <string name="email_not_sent">Email not sent</string>
+    <string name="invalid_email_or_password_format">Invalid email or password format</string>
+    <string name="authentication_failed">Authentication failed.</string>
+    <string name="email_already_exists">Email already exists.</string>
+    <string name="registered_successfully_but_failed_to_send_verification_email">Registered successfully but Failed to send verification email.</string>
+    <string name="registered_successfully_and_verification_email_sent">Registered successfully and Verification email sent.</string>
+    <string name="please_fill_in_all_the_fields">Please fill in all the fields.</string>
+    <string name="failed_to_update_holiday">Failed to update holiday</string>
+    <string name="failed_to_delete_holiday">Failed to delete holiday</string>
+    <string name="price">Price</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>

@@ -23,6 +23,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * This fragment is the home screen of the application.
+ * It displays a list of holidays and provides options to add a new holiday, view holidays on a map, and log out.
+ */
 class Home : Fragment() {
     // Firebase authentication instance
     private lateinit var auth: FirebaseAuth
@@ -33,7 +37,9 @@ class Home : Fragment() {
     // Firestore database instance
     private lateinit var firestore: FirebaseFirestore
 
-    // Inflate the layout for this fragment
+    /**
+     * Inflates the layout for this fragment
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,7 +47,10 @@ class Home : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    // Called immediately after onCreateView has returned
+    /**
+     * Called immediately after onCreateView has returned
+     * Initializes Firebase and navigation controller, sets up the RecyclerView and button click listeners
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -61,14 +70,19 @@ class Home : Fragment() {
         setupMenuButton(view)
     }
 
-    // Initialize Firebase and navigation controller
+    /**
+     * Initializes Firebase and navigation controller
+     */
     private fun init(view: View) {
         navControl = Navigation.findNavController(view)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
     }
 
-    // Setup the RecyclerView
+    /**
+     * Sets up the RecyclerView with FirestoreRecyclerAdapter to display the list of holidays
+     * Also sets up the swipe-to-delete functionality
+     */
     private fun setupRecyclerView() {
         val recyclerView = view?.findViewById<RecyclerView>(R.id.holidayRecyclerView)
 
@@ -96,7 +110,9 @@ class Home : Fragment() {
         }
     }
 
-    // Setup swipe-to-delete functionality
+    /**
+     * Sets up the swipe-to-delete functionality for the RecyclerView
+     */
     private fun setupSwipeToDelete(recyclerView: RecyclerView?, adapter: HolidayAdapter) {
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -187,7 +203,9 @@ class Home : Fragment() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    // Setup the add button click listener
+    /**
+     * Sets up the add button click listener to navigate to the holiday details screen
+     */
     private fun addNewHoliday() {
         val addButton = view?.findViewById<FloatingActionButton>(R.id.addButton) ?: return
         addButton.setOnClickListener {
@@ -203,7 +221,9 @@ class Home : Fragment() {
         }
     }
 
-    // Setup the menu button click listener
+    /**
+     * Sets up the menu button click listener to log out the user
+     */
     private fun setupMenuButton(view: View) {
         val menuButton = view.findViewById<ImageButton>(R.id.menuHome)
         menuButton.setOnClickListener {
@@ -211,7 +231,9 @@ class Home : Fragment() {
         }
     }
 
-    // Logout the user and navigate to the sign-in screen
+    /**
+     * Logs out the user and navigates to the sign-in screen
+     */
     private fun logoutUser() {
         auth.signOut()
         navControl.navigate(R.id.action_homeFragment_to_signInFragment)

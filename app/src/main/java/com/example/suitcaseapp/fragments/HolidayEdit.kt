@@ -39,20 +39,23 @@ import com.squareup.picasso.Picasso
 import java.util.Locale
 import java.util.UUID
 
-
+/**
+ * This fragment is used to edit the details of a holiday.
+ * It allows the user to update the title, description, price, and image of the holiday.
+ * It also provides the option to delete the holiday.
+ */
 @Suppress("DEPRECATION")
 class HolidayEdit : Fragment() {
-
     companion object {
         private const val USERS_COLLECTION = "users"
         private const val HOLIDAYS_COLLECTION = "holidays"
         private const val IMAGES_FOLDER = "images"
     }
 
-    private lateinit var auth: FirebaseAuth
+    private val auth by lazy { FirebaseAuth.getInstance() }
     private lateinit var navControl: NavController
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var storage: FirebaseStorage
+    private val firestore by lazy { FirebaseFirestore.getInstance() }
+    private val storage by lazy { FirebaseStorage.getInstance() }
 
     private lateinit var holidayTitleEditText: EditText
     private lateinit var descriptionEditText: EditText
@@ -62,14 +65,17 @@ class HolidayEdit : Fragment() {
     private lateinit var saveButton: ImageButton
     private lateinit var deleteButton: ImageButton
     private lateinit var dateCreatedTextView: EditText
+    private lateinit var priceEditText: EditText
     private var imageUri: Uri? = null
     private var currentImageUrl: String? = null
     private lateinit var mapFragment: SupportMapFragment
     private var holidayAddress: String? = null
 
-
     private lateinit var imageResultLauncher: ActivityResultLauncher<Intent>
 
+    /**
+     * Inflates the layout for this fragment
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -77,14 +83,15 @@ class HolidayEdit : Fragment() {
         return inflater.inflate(R.layout.fragment_holiday_edit, container, false)
     }
 
+    /**
+     * Initializes the UI elements and sets up the click listeners
+     */
     private fun init(view: View) {
         navControl = Navigation.findNavController(view)
-        auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-        storage = FirebaseStorage.getInstance()
 
         holidayTitleEditText = view.findViewById(R.id.holidayTitleEditText)
         descriptionEditText = view.findViewById(R.id.holidayDescriptionEditText)
+        priceEditText = view.findViewById(R.id.priceEditText)
         checkBox = view.findViewById(R.id.chkItemsPurchased)
         holidayImageView = view.findViewById(R.id.imageView)
         selectImageButton = view.findViewById(R.id.selectImageButton)
@@ -102,15 +109,14 @@ class HolidayEdit : Fragment() {
 
         val sendSmsButton: AppCompatImageButton = view.findViewById(R.id.sendSMSButton)
         sendSmsButton.setOnClickListener {
-            // log to console
-            Log.d(TAG, "sendSMSButton clicked")
             val holidayTitle = holidayTitleEditText.text.toString()
             val description = descriptionEditText.text.toString()
             val dateCreated = dateCreatedTextView.text.toString()
+            val price = priceEditText.text.toString()
 
             // Format the SMS content
             val formattedMessage =
-                "Holiday Details:\n\nTitle: $holidayTitle\n\nDescription: $description\n\nDate: $dateCreated\n\nLocation: $holidayAddress"
+                "Holiday Details:\n\nTitle: $holidayTitle\n\nDescription: $description\n\nPrice: $price\n\nDate: $dateCreated\n\nLocation: $holidayAddress"
 
             // Create an EditText where the user can enter the phone number
             val phoneNumberEditText = EditText(requireContext())
@@ -154,6 +160,10 @@ class HolidayEdit : Fragment() {
         }
     }
 
+    /**
+     * Called immediately after onCreateView() has returned, but before any saved state has been restored in to the view.
+     * This is useful for when Fragment views are created from code and not inflated from a layout.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -175,6 +185,9 @@ class HolidayEdit : Fragment() {
         }
     }
 
+    /**
+     * Sends an SMS with the holiday details using Firebase Functions Twilio extension
+     */
     private fun sendSms(message: String, to: String) {
         val db = Firebase.firestore
         val data = hashMapOf(
@@ -193,6 +206,9 @@ class HolidayEdit : Fragment() {
             }
     }
 
+    /**
+     * Loads the holiday details from Firestore
+     */
     private fun loadHoliday(email: String, id: String) {
         firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION)
             .document(id).get()
@@ -202,6 +218,7 @@ class HolidayEdit : Fragment() {
                     holidayTitleEditText.setText(holiday?.title)
                     descriptionEditText.setText(holiday?.lines?.joinToString("\n"))
                     checkBox.isChecked = holiday?.purchased ?: false
+                    priceEditText.setText(holiday?.price.toString())
                     dateCreatedTextView.setText(holiday?.dateCreated)
 
                     val imageUrl = holiday?.imageUrl
@@ -210,18 +227,22 @@ class HolidayEdit : Fragment() {
                         Picasso.get().load(imageUrl).into(holidayImageView)
                     }
 
-                    // Get the latitude and longitude from the Firestore document
-                    val latitude = document.getDouble("latitude")
-                    val longitude = document.getDouble("longitude")
+                    // Get the location as a GeoPoint from the Firestore document
+                    val locationGeoPoint = document.getGeoPoint("location")
 
-                    // If the latitude and longitude are not null, convert them to an address
-                    if (latitude != null && longitude != null) {
+                    // If the locationGeoPoint is not null, convert it to an address
+                    if (locationGeoPoint != null) {
                         val geocoder = context?.let { Geocoder(it, Locale.getDefault()) }
-                        val addresses = geocoder?.getFromLocation(latitude, longitude, 1)
+                        val addresses = geocoder?.getFromLocation(
+                            locationGeoPoint.latitude,
+                            locationGeoPoint.longitude,
+                            1
+                        )
                         holidayAddress = addresses?.get(0)?.getAddressLine(0)
 
                         mapFragment.getMapAsync { googleMap ->
-                            val location = LatLng(latitude, longitude)
+                            val location =
+                                LatLng(locationGeoPoint.latitude, locationGeoPoint.longitude)
                             googleMap.addMarker(
                                 MarkerOptions().position(location)
                                     .title(holiday?.title + " Location")
@@ -246,10 +267,14 @@ class HolidayEdit : Fragment() {
             }
     }
 
+    /**
+     * Sets up the save button to update the holiday details in Firestore
+     */
     private fun setupSaveButton(email: String, id: String) {
         saveButton.setOnClickListener {
             val title = holidayTitleEditText.text.toString()
             val lines = descriptionEditText.text.toString().split("\n")
+            val price = priceEditText.text.toString().toDouble()
             val purchased = checkBox.isChecked
 
             // Use the current imageUrl if no new image has been selected
@@ -259,8 +284,7 @@ class HolidayEdit : Fragment() {
                 .document(id).get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
-                        val originalLatitude = document.getDouble("latitude")
-                        val originalLongitude = document.getDouble("longitude")
+                        val originalLocation = document.getGeoPoint("location")
 
                         val updatedHoliday = HolidayDetails.Holiday(
                             title,
@@ -268,8 +292,8 @@ class HolidayEdit : Fragment() {
                             imageUrl = imageUrl,
                             dateCreated = dateCreatedTextView.text.toString(),
                             purchased = purchased,
-                            latitude = originalLatitude!!,
-                            longitude = originalLongitude!!
+                            location = originalLocation!!,
+                            price = price
                         )
 
                         if (imageUri != null) {
@@ -287,6 +311,9 @@ class HolidayEdit : Fragment() {
         }
     }
 
+    /**
+     * Uploads the selected image to Firebase Storage and updates the holiday details in Firestore
+     */
     private fun uploadImageAndSaveHoliday(
         email: String,
         id: String,
@@ -319,6 +346,9 @@ class HolidayEdit : Fragment() {
         }
     }
 
+    /**
+     * Sets up the image result launcher to handle the result of the image selection intent
+     */
     private fun setupImageResultLauncher() {
         imageResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -330,6 +360,9 @@ class HolidayEdit : Fragment() {
             }
     }
 
+    /**
+     * Sets up the delete button to delete the holiday from Firestore
+     */
     private fun setupDeleteButton(email: String, id: String) {
         deleteButton.setOnClickListener {
             AlertDialog.Builder(requireContext())
@@ -371,7 +404,11 @@ class HolidayEdit : Fragment() {
                                             .setPositiveButton("OK", null)
                                             .show()
                                         Log.w(TAG, "Error deleting document", e)
-                                        // TODO: Show error message to the user
+                                        AlertDialog.Builder(requireContext())
+                                            .setTitle("Error")
+                                            .setMessage(getString(R.string.failed_to_delete_holiday))
+                                            .setPositiveButton("OK", null)
+                                            .show()
                                     }
                             }
                         }
@@ -389,6 +426,9 @@ class HolidayEdit : Fragment() {
         }
     }
 
+    /**
+     * Updates the holiday details in Firestore
+     */
     private fun updateHoliday(email: String, id: String, holiday: HolidayDetails.Holiday) {
         firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION)
             .document(id).set(holiday)
@@ -399,7 +439,11 @@ class HolidayEdit : Fragment() {
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error updating document", e)
-                // TODO: Show error message to the user
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error")
+                    .setMessage(getString(R.string.failed_to_update_holiday) + e.message)
+                    .setPositiveButton("OK", null)
+                    .show()
             }
     }
 }

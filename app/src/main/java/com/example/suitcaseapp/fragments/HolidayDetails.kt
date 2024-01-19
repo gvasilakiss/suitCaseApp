@@ -1,5 +1,6 @@
 package com.example.suitcaseapp.fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -23,11 +24,16 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
+/**
+ * This fragment is responsible for displaying and handling the details of a holiday.
+ * It allows the user to add a holiday with a title, description, image, and location on a map.
+ * The holiday details are saved to Firestore and the image is saved to Firebase Storage.
+ */
 class HolidayDetails : Fragment() {
     // Firebase authentication instance
     private lateinit var auth: FirebaseAuth
@@ -56,11 +62,14 @@ class HolidayDetails : Fragment() {
     // UI components
     private val titleEditText by lazy { view?.findViewById<EditText>(R.id.notesTitle) }
     private val descriptionEditText by lazy { view?.findViewById<EditText>(R.id.notesDescription) }
+    private val priceEditText by lazy { view?.findViewById<EditText>(R.id.priceEditText) }
     private val saveButton by lazy { view?.findViewById<AppCompatImageButton>(R.id.SaveNotes) }
     private val selectImageButton by lazy { view?.findViewById<Button>(R.id.selectImageButton) }
     private val checkBox by lazy { view?.findViewById<CheckBox>(R.id.chkItemsPurchased) }
 
-    // Inflate the layout for this fragment
+    /**
+     * Inflates the layout for this fragment
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,7 +79,10 @@ class HolidayDetails : Fragment() {
         return view
     }
 
-    // Initialize the views and setup the add button
+    /**
+     * Called immediately after onCreateView has returned
+     * Initializes Firebase and Navigation instances, sets up the map and the add button
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -80,7 +92,9 @@ class HolidayDetails : Fragment() {
         setupMap()
     }
 
-    // Initialize Firebase and Navigation instances
+    /**
+     * Initializes Firebase and Navigation instances
+     */
     private fun init(view: View) {
         navControl = Navigation.findNavController(view)
         auth = FirebaseAuth.getInstance()
@@ -88,7 +102,9 @@ class HolidayDetails : Fragment() {
         storage = FirebaseStorage.getInstance()
     }
 
-    // Setup the map
+    /**
+     * Sets up the map and adds a marker at the clicked location
+     */
     private fun setupMap() {
         mapFragment.getMapAsync { googleMap ->
             googleMap.setOnMapClickListener { latLng ->
@@ -102,7 +118,10 @@ class HolidayDetails : Fragment() {
         }
     }
 
-    // Setup the add button and its functionality
+    /**
+     * Sets up the add button and its functionality
+     * It allows the user to select an image and add a holiday
+     */
     private fun setupAddButton() {
         // Register for activity result to get the selected image
         val getContent =
@@ -131,22 +150,25 @@ class HolidayDetails : Fragment() {
                 // Rest of your logic when location is available
                 val title = titleEditText?.text.toString()
                 val description = descriptionEditText?.text.toString()
-                val isPurchased = checkBox?.isChecked ?: false
+                val price = priceEditText?.text.toString().toDoubleOrNull()
+                val purchased = checkBox?.isChecked ?: false
 
-                if (title.isNotEmpty() && description.isNotEmpty()) {
+                if (title.isNotEmpty() && description.isNotEmpty() && price != null) {
                     // Add the holiday to Firestore
                     addToFirestore(
                         title,
                         description,
                         imageUri,
                         getTime(),
-                        isPurchased,
+                        purchased,
                         location.latitude,
-                        location.longitude
+                        location.longitude,
+                        price
                     )
                     // Clear the fields
                     titleEditText?.setText("")
                     descriptionEditText?.setText("")
+                    priceEditText?.setText("")
                     imageView?.setImageDrawable(null)
                     // Navigate back to the home fragment
                     navControl.navigate(R.id.action_notesDetails_to_homeFragment)
@@ -161,18 +183,23 @@ class HolidayDetails : Fragment() {
         }
     }
 
-    // Data class representing a Holiday
+    /**
+     * Data class representing a Holiday
+     */
     data class Holiday(
         val title: String = "", // The title of the holiday
         val lines: List<String> = listOf(), // The lines of description for the holiday
         var imageUrl: String? = null, // The URL of the image for the holiday (nullable)
         val dateCreated: String = "", // The date the holiday was created
         val purchased: Boolean = false, // Whether the holiday has been purchased
-        val latitude: Double = 1.0, // The latitude of the location where the holiday was created
-        val longitude: Double = 1.0 // The longitude of the location where the holiday was created
+        val location: GeoPoint = GeoPoint(0.0, 0.0), // The location of the holiday
+        val price: Double = 1.0 // The price of the holiday
     )
 
-    // Function to add a holiday to Firestore
+    /**
+     * Function to add a holiday to Firestore
+     * It uploads the image to Firebase Storage and saves the holiday details to Firestore
+     */
     private fun addToFirestore(
         holidayTitle: String,
         description: String,
@@ -180,7 +207,8 @@ class HolidayDetails : Fragment() {
         dateCreated: String,
         purchased: Boolean,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        price: Double
     ) {
         // Get the current user
         val currentUser = auth.currentUser
@@ -200,8 +228,8 @@ class HolidayDetails : Fragment() {
                             imageUrl,
                             dateCreated,
                             purchased,
-                            latitude,
-                            longitude
+                            GeoPoint(latitude, longitude),
+                            price
                         )
                         saveHolidayToFirestore(email, holiday)
                     }
@@ -213,8 +241,8 @@ class HolidayDetails : Fragment() {
                         null,
                         dateCreated,
                         purchased,
-                        latitude,
-                        longitude
+                        GeoPoint(latitude, longitude),
+                        price
                     )
                     saveHolidayToFirestore(email, holiday)
                 }
@@ -225,7 +253,9 @@ class HolidayDetails : Fragment() {
         }
     }
 
-    // Function to upload an image to Firebase Storage and get the download URL
+    /**
+     * Function to upload an image to Firebase Storage and get the download URL
+     */
     private fun uploadImageToStorage(imageUri: Uri, onSuccess: (imageUrl: String) -> Unit) {
         val storageRef = storage.reference
         val imageRef = storageRef.child(IMAGES_FOLDER).child(imageUri.lastPathSegment!!)
@@ -254,7 +284,9 @@ class HolidayDetails : Fragment() {
         }
     }
 
-    // Save the holiday item to Firestore
+    /**
+     * Save the holiday item to Firestore
+     */
     private fun saveHolidayToFirestore(email: String, holiday: Holiday) {
         firestore.collection(USERS_COLLECTION).document(email).collection(HOLIDAYS_COLLECTION)
             .add(holiday)
@@ -267,9 +299,13 @@ class HolidayDetails : Fragment() {
             }
     }
 
-    // Get the current date and time
+    /**
+     * Get the current date and time
+     */
+    @SuppressLint("SimpleDateFormat")
     private fun getTime(): String {
-        return SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault()).format(Date())
+        val sdf = SimpleDateFormat(" 'Created on' dd.MM.yyyy 'at' HH:mm:ss")
+        return sdf.format(Date())
     }
 
     companion object {

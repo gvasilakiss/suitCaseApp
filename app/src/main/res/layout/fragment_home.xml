@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Show Map"
-            android:drawableLeft="@android:drawable/ic_menu_mapmode"
+            android:drawableLeft="@android:drawable/ic_dialog_map"
             android:drawablePadding="8dp"
             android:backgroundTint="@color/blue" />
     </LinearLayout>
